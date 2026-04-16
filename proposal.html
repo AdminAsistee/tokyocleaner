@@ -1,0 +1,2189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TokyoCleaner — Customer Portal Project Proposal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+    ============================================================ */
+    :root {
+      --navy: #0F1F3D;
+      --navy-mid: #1A3461;
+      --teal: #0EA5A0;
+      --teal-light: #E6F8F7;
+      --orange: #F97316;
+      --orange-bg: #FFF4EC;
+      --red: #DC2626;
+      --red-bg: #FEF2F2;
+      --green: #16A34A;
+      --green-bg: #F0FDF4;
+      --gray-50: #F8FAFC;
+      --gray-100: #F1F5F9;
+      --gray-200: #E2E8F0;
+      --gray-300: #CBD5E1;
+      --gray-500: #64748B;
+      --gray-700: #334155;
+      --gray-900: #0F172A;
+      --white: #FFFFFF;
+
+      --font-body: 'Inter', 'Noto Sans JP', sans-serif;
+      --radius: 8px;
+      --radius-lg: 12px;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--gray-900);
+      background: var(--white);
+      font-size: 14px;
+      line-height: 1.7;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ============================================================
+       LAYOUT
+    ============================================================ */
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    section {
+      padding: 60px 0;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    section:last-child {
+      border-bottom: none;
+    }
+
+    /* ============================================================
+       COVER PAGE
+    ============================================================ */
+    .cover {
+      min-height: 100vh;
+      background: linear-gradient(145deg, var(--navy) 0%, var(--navy-mid) 60%, #0D3B5E 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 60px;
+      page-break-after: always;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover::before {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(14, 165, 160, 0.15) 0%, transparent 70%);
+      top: -100px;
+      right: -100px;
+      border-radius: 50%;
+    }
+
+    .cover::after {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, transparent 70%);
+      bottom: 100px;
+      left: -50px;
+      border-radius: 50%;
+    }
+
+    .cover-top {
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 80px;
+    }
+
+    .cover-logo-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--teal);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .cover-logo-text {
+      color: var(--white);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .cover-logo-text span {
+      color: var(--teal);
+    }
+
+    .cover-badge {
+      display: inline-block;
+      background: rgba(14, 165, 160, 0.2);
+      border: 1px solid rgba(14, 165, 160, 0.4);
+      color: var(--teal);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+
+    .cover-title {
+      font-size: 52px;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+    }
+
+    .cover-title em {
+      font-style: normal;
+      color: var(--teal);
+    }
+
+    .cover-subtitle {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.65);
+      max-width: 520px;
+      line-height: 1.6;
+    }
+
+    .cover-stats {
+      display: flex;
+      gap: 40px;
+      padding: 32px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin: 40px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-stat-value {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .cover-stat-value span {
+      color: var(--teal);
+    }
+
+    .cover-stat-label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cover-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-meta {
+      color: rgba(255, 255, 255, 0.45);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .cover-meta strong {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .cover-urgency {
+      background: rgba(249, 115, 22, 0.15);
+      border: 1px solid rgba(249, 115, 22, 0.4);
+      border-radius: var(--radius);
+      padding: 12px 20px;
+      color: #FDBA74;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: right;
+      line-height: 1.5;
+    }
+
+    /* ============================================================
+       SECTION HEADERS
+    ============================================================ */
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--gray-200);
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.8px;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .section-intro {
+      font-size: 15px;
+      color: var(--gray-500);
+      max-width: 680px;
+      margin-bottom: 40px;
+    }
+
+    /* ============================================================
+       PROBLEM SECTION — URGENCY CARDS
+    ============================================================ */
+    .urgency-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .urgency-card {
+      background: var(--red-bg);
+      border: 1px solid #FECACA;
+      border-left: 4px solid var(--red);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+    }
+
+    .urgency-card h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--red);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .urgency-card p {
+      font-size: 13px;
+      color: var(--gray-700);
+      line-height: 1.6;
+    }
+
+    .urgency-card .stat-highlight {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--red);
+      letter-spacing: -1px;
+      display: block;
+      margin-top: 8px;
+      line-height: 1;
+    }
+
+    .quote-block {
+      background: var(--orange-bg);
+      border-left: 4px solid var(--orange);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+
+    .quote-block p {
+      font-size: 14px;
+      color: var(--gray-700);
+      font-style: italic;
+    }
+
+    .quote-block strong {
+      color: var(--orange);
+      font-style: normal;
+    }
+
+    /* ============================================================
+       CALENDLY PAIN TABLE
+    ============================================================ */
+    .pain-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 20px 0;
+    }
+
+    .pain-table th {
+      background: var(--navy);
+      color: var(--white);
+      padding: 10px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    .pain-table th:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+
+    .pain-table th:last-child {
+      border-radius: 0 6px 6px 0;
+    }
+
+    .pain-table td {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      color: var(--gray-700);
+    }
+
+    .pain-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .pain-table tr:nth-child(even) td {
+      background: var(--gray-50);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .tag-red {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    .tag-green {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .tag-gray {
+      background: var(--gray-100);
+      color: var(--gray-500);
+    }
+
+    .tag-teal {
+      background: var(--teal-light);
+      color: var(--teal);
+    }
+
+    /* ============================================================
+       ECOSYSTEM MAPS
+    ============================================================ */
+    .ecosystem-wrapper {
+      margin: 24px 0;
+    }
+
+    .eco-world {
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 12px;
+    }
+
+    .eco-world.customer {
+      background: #EFF6FF;
+      border: 2px solid #BFDBFE;
+    }
+
+    .eco-world.internal {
+      background: #F0FDF4;
+      border: 2px solid #BBF7D0;
+    }
+
+    .eco-world-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .eco-world.customer .eco-world-title {
+      color: #1D4ED8;
+    }
+
+    .eco-world.internal .eco-world-title {
+      color: var(--green);
+    }
+
+    .eco-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .eco-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .eco-box {
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .eco-box.tool {
+      background: var(--white);
+      border: 1.5px solid var(--gray-300);
+      color: var(--gray-700);
+    }
+
+    .eco-box.new-tool {
+      background: var(--teal-light);
+      border: 1.5px solid var(--teal);
+      color: #0A7A76;
+    }
+
+    .eco-box.changed {
+      background: var(--orange-bg);
+      border: 1.5px solid #FCD34D;
+      color: #92400E;
+    }
+
+    .eco-box.removed {
+      background: var(--red-bg);
+      border: 1.5px dashed #FCA5A5;
+      color: var(--red);
+      text-decoration: line-through;
+    }
+
+    .eco-arrow {
+      color: var(--gray-300);
+      font-size: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .eco-note {
+      font-size: 11px;
+      color: var(--gray-500);
+      font-style: italic;
+      margin-left: 4px;
+    }
+
+    .eco-connector {
+      text-align: center;
+      padding: 10px 0;
+      font-size: 11px;
+      color: var(--gray-500);
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .eco-connector-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 8px 0;
+    }
+
+    .eco-middle-box {
+      background: var(--navy);
+      color: var(--white);
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .eco-middle-label {
+      font-size: 10px;
+      color: var(--teal);
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .eco-vert-arrow {
+      font-size: 20px;
+      color: var(--gray-300);
+      text-align: center;
+    }
+
+    /* Before/After comparison */
+    .before-after {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .before-col,
+    .after-col {
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+
+    .before-col {
+      background: var(--red-bg);
+      border: 1px solid #FECACA;
+    }
+
+    .after-col {
+      background: var(--green-bg);
+      border: 1px solid #BBF7D0;
+    }
+
+    .ba-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .before-col .ba-label {
+      color: var(--red);
+    }
+
+    .after-col .ba-label {
+      color: var(--green);
+    }
+
+    .ba-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ba-step {
+      font-size: 12px;
+      color: var(--gray-700);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+
+    .ba-step.bad {
+      background: rgba(220, 38, 38, 0.08);
+    }
+
+    .ba-step.good {
+      background: rgba(22, 163, 74, 0.08);
+    }
+
+    .ba-step-icon {
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+
+    /* ============================================================
+       PHASE CARDS
+    ============================================================ */
+    .phase-card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 20px;
+      page-break-inside: avoid;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 24px;
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .phase-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .phase-0 .phase-number {
+      background: var(--gray-500);
+    }
+
+    .phase-1 .phase-number {
+      background: var(--teal);
+    }
+
+    .phase-2 .phase-number {
+      background: #7C3AED;
+    }
+
+    .phase-3 .phase-number {
+      background: var(--orange);
+    }
+
+    .phase-header-text h3 {
+      margin-bottom: 2px;
+    }
+
+    .phase-header-text p {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin: 0;
+    }
+
+    .phase-body {
+      padding: 20px 24px;
+    }
+
+    .phase-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .phase-item {
+      background: var(--gray-50);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+
+    .phase-item h4 {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .phase-item ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .phase-item li {
+      font-size: 12px;
+      color: var(--gray-700);
+      padding: 3px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .phase-item li::before {
+      content: '→';
+      color: var(--teal);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .deliverable-box {
+      background: var(--teal-light);
+      border: 1px solid rgba(14, 165, 160, 0.3);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin-top: 14px;
+      font-size: 12px;
+      color: #0A7A76;
+    }
+
+    .deliverable-box strong {
+      font-weight: 700;
+    }
+
+    /* ============================================================
+       DATA SCHEMA
+    ============================================================ */
+    .schema-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+
+    .schema-table th {
+      background: var(--navy-mid);
+      color: var(--white);
+      padding: 8px 12px;
+      text-align: left;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .schema-table th:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+
+    .schema-table th:last-child {
+      border-radius: 0 6px 6px 0;
+    }
+
+    .schema-table td {
+      padding: 7px 12px;
+      border-bottom: 1px solid var(--gray-100);
+      color: var(--gray-700);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    .schema-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .schema-table .field-type {
+      color: var(--teal);
+      font-size: 11px;
+    }
+
+    .schema-table .new-field {
+      background: var(--teal-light);
+    }
+
+    .schema-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      margin: 20px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .schema-section-title .schema-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 100px;
+    }
+
+    .schema-badge.new {
+      background: var(--teal-light);
+      color: var(--teal);
+    }
+
+    .schema-badge.existing {
+      background: var(--gray-100);
+      color: var(--gray-500);
+    }
+
+    /* ============================================================
+       TECH STACK
+    ============================================================ */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .tech-card {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .tech-card-category {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .tech-card-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .tech-card-desc {
+      font-size: 11px;
+      color: var(--gray-500);
+      line-height: 1.5;
+    }
+
+    /* ============================================================
+       WHAT CHANGES TABLE
+    ============================================================ */
+    .changes-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 20px 0;
+    }
+
+    .changes-table th {
+      background: var(--gray-100);
+      color: var(--gray-700);
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border-bottom: 2px solid var(--gray-200);
+    }
+
+    .changes-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      vertical-align: top;
+    }
+
+    .changes-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .changes-table tr:hover td {
+      background: var(--gray-50);
+    }
+
+    .check {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .cross {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    /* ============================================================
+       PRINT STYLES
+    ============================================================ */
+    @media print {
+      @page {
+        size: A4;
+        margin: 0;
+      }
+
+      body {
+        font-size: 12px;
+      }
+
+      .cover {
+        min-height: 100vh;
+        page-break-after: always;
+      }
+
+      .no-break {
+        page-break-inside: avoid;
+      }
+
+      section {
+        page-break-inside: avoid;
+        padding: 40px 0;
+      }
+
+      .before-after {
+        page-break-inside: avoid;
+      }
+
+      .phase-card {
+        page-break-inside: avoid;
+      }
+
+      .urgency-grid {
+        page-break-inside: avoid;
+      }
+
+      .cover-title {
+        font-size: 40px;
+      }
+
+      .print-btn {
+        display: none !important;
+      }
+    }
+
+    /* ============================================================
+       PRINT BUTTON (screen only)
+    ============================================================ */
+    .print-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      padding: 14px 28px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(15, 31, 61, 0.35);
+      transition: all 0.2s ease;
+      font-family: var(--font-body);
+    }
+
+    .print-btn:hover {
+      background: var(--teal);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(14, 165, 160, 0.35);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    .doc-footer {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--gray-300);
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <button class="print-btn" onclick="window.print()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+    Download PDF / Print
+  </button>
+
+  <!-- ============================================================
+     COVER PAGE
+============================================================ -->
+  <div class="cover">
+    <div class="cover-top">
+      <div class="cover-logo">
+        <div class="cover-logo-icon">🧹</div>
+        <div class="cover-logo-text">Tokyo<span>Cleaner</span></div>
+      </div>
+      <div class="cover-badge">Project Proposal · April 2026</div>
+      <h1 class="cover-title">Customer Portal<br />&amp; <em>Website Rebuild</em></h1>
+      <p class="cover-subtitle">
+        A proposal to close the information gap between TokyoCleaner operations and customers — eliminating repetitive
+        data entry, surfacing order history, and building the foundation for scalable customer relationships.
+      </p>
+    </div>
+
+    <div class="cover-stats">
+      <div>
+        <div class="cover-stat-value">6<span>,400</span></div>
+        <div class="cover-stat-label">Orders in 2025</div>
+      </div>
+      <div>
+        <div class="cover-stat-value">10<span>+</span></div>
+        <div class="cover-stat-label">Form Fields Re-entered Per Booking</div>
+      </div>
+      <div>
+        <div class="cover-stat-value">0</div>
+        <div class="cover-stat-label">Post-Booking Customer Visibility</div>
+      </div>
+      <div>
+        <div class="cover-stat-value">4</div>
+        <div class="cover-stat-label">Implementation Phases</div>
+      </div>
+    </div>
+
+    <div class="cover-bottom">
+      <div class="cover-meta">
+        <strong>Prepared by:</strong> TokyoCleaner Operations<br />
+        <strong>Date:</strong> April 10, 2026<br />
+        <strong>Version:</strong> 1.0 — Final
+      </div>
+      <div class="cover-urgency">
+        ⚠ Recurring customers currently have<br />
+        zero self-service visibility into<br />
+        their cleaning schedule.
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+     MAIN CONTENT
+============================================================ -->
+  <div class="page">
+
+    <!-- 1. EXECUTIVE SUMMARY / THE PROBLEM -->
+    <section>
+      <div class="section-label">01 — The Problem</div>
+      <h2>Why We Need This — Now</h2>
+      <p class="section-intro">
+        TokyoCleaner currently operates with 6,400+ annual orders managed efficiently through AppSheet, Zapier, and
+        the legacy systems. But one critical gap remains: <strong>customers disappear after booking.</strong>
+      </p>
+
+      <div class="urgency-grid">
+        <div class="urgency-card">
+          <h4>🔁 Repetitive Data Entry</h4>
+          <p>Every new booking forces customers to re-enter their full address, room number, gate code, access
+            instructions, photos, and 5 more fields — even if they've booked 20 times before.</p>
+          <span class="stat-highlight">10+ fields</span>
+          <p style="font-size:11px;margin-top:4px;">re-entered on every single booking</p>
+        </div>
+        <div class="urgency-card">
+          <h4>👻 Zero Post-Booking Visibility</h4>
+          <p>After a customer confirms their booking, they have no way to check order status, see their assigned
+            cleaner, or view after-photos — unless they manually message on LINE or email.</p>
+          <span class="stat-highlight">0%</span>
+          <p style="font-size:11px;margin-top:4px;">customer self-service post-booking</p>
+        </div>
+        <div class="urgency-card">
+          <h4>📸 Photos Lost in LINE Chat</h4>
+          <p>After-photos taken by cleaners are sent to a LINE group chat and permanently lost in history. There is no
+            structured, retrievable photo storage. Customers never see them.</p>
+          <span class="stat-highlight">100%</span>
+          <p style="font-size:11px;margin-top:4px;">of after-photos unshared with customers</p>
+        </div>
+        <div class="urgency-card">
+          <h4>🗂 No Customer Data Asset</h4>
+          <p>TokyoCleaner has no owned, structured customer database. Customer data is scattered across Google
+            Sheets, and LINE chat history — with no unified profile.</p>
+          <span class="stat-highlight">~1,600+</span>
+          <p style="font-size:11px;margin-top:4px;">estimated customers with no unified profile</p>
+        </div>
+      </div>
+
+    </section>
+
+    <section>
+      <div class="section-label">02 — Current State Analysis</div>
+      <h2>What Non-Recurring Customers Fill Out Every Booking</h2>
+      <p class="section-intro">
+        For <strong>Express Cleaning and one-time customers</strong>, the booking form collects the following
+        fields on <em>every single booking</em> — regardless of how many times they have booked before. Recurring
+        customers are exempt: their orders are auto-populated and only require date &amp; time.
+      </p>
+
+      <table class="pain-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Booking Field</th>
+            <th>Needs Re-entry?</th>
+            <th>After Portal: Registered Once</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Date &amp; Time</td>
+            <td><span class="tag tag-gray">Always</span></td>
+            <td>Required every booking (by nature)</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Name</td>
+            <td><span class="tag tag-gray">Always</span></td>
+            <td>Stored in customer profile</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Email</td>
+            <td><span class="tag tag-gray">Always</span></td>
+            <td>Used as login identifier</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Phone Number</td>
+            <td><span class="tag tag-red">Unnecessary</span></td>
+            <td><span class="tag tag-green">Registered once</span></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Address</td>
+            <td><span class="tag tag-red">Unnecessary</span></td>
+            <td><span class="tag tag-green">Registered once</span></td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Google Map Link</td>
+            <td><span class="tag tag-red">Unnecessary</span></td>
+            <td><span class="tag tag-green">Registered once</span></td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>Room Number</td>
+            <td><span class="tag tag-red">Unnecessary</span></td>
+            <td><span class="tag tag-green">Registered once</span></td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>How to Access Property</td>
+            <td><span class="tag tag-red">Unnecessary</span></td>
+            <td><span class="tag tag-green">Registered once</span></td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>Do You Have a Vacuum?</td>
+            <td><span class="tag tag-red">Unnecessary</span></td>
+            <td><span class="tag tag-green">Registered once</span></td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>Photo of Room Condition</td>
+            <td><span class="tag tag-red">Unnecessary</span></td>
+            <td><span class="tag tag-green">Registered once</span></td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td>Additional Notes</td>
+            <td><span class="tag tag-red">Unnecessary</span></td>
+            <td><span class="tag tag-green">Registered once</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="font-size:13px;color:var(--gray-500);margin-top:8px;">
+        <strong>8 out of 11 fields</strong> never need to change between bookings for a returning customer. The portal
+        eliminates all 8 from future bookings.
+      </p>
+    </section>
+
+    <!-- 3. CURRENT WORKFLOW -->
+    <section>
+      <div class="section-label">03 — Current Workflow</div>
+      <h2>How TokyoCleaner Operates Today</h2>
+      <p class="section-intro">
+        The current operation is well-structured internally but leaves customers completely isolated after they book.
+        The two worlds — customer and internal — never connect.
+      </p>
+
+      <div class="before-after">
+        <div class="before-col">
+          <div class="ba-label">👤 Customer Experience — Today</div>
+          <div class="ba-flow">
+            <div class="ba-step bad"><span class="ba-step-icon">1️⃣</span><span>Finds TokyoCleaner on Webflow
+                website</span></div>
+            <div class="ba-step bad"><span class="ba-step-icon">2️⃣</span><span>Fills out 10+ fields in the native form — every
+                time</span></div>
+            <div class="ba-step bad"><span class="ba-step-icon">3️⃣</span><span>Booking confirmed</span></div>
+            <div class="ba-step bad"><span class="ba-step-icon">👻</span><span><strong>Customer disappears.</strong> No
+                status updates. No photos. No history. Must message to check in.</span></div>
+            <div class="ba-step bad"><span class="ba-step-icon">🔁</span><span>Next booking: fills out all 10+ fields
+                again</span></div>
+          </div>
+        </div>
+        <div class="after-col">
+          <div class="ba-label">✨ Customer Experience — After Portal</div>
+          <div class="ba-flow">
+            <div class="ba-step good"><span class="ba-step-icon">1️⃣</span><span>Visits new tokyocleaner.jp</span></div>
+            <div class="ba-step good"><span class="ba-step-icon">2️⃣</span><span><strong>One-time:</strong> Registers
+                property details in portal</span></div>
+            <div class="ba-step good"><span class="ba-step-icon">3️⃣</span><span>Books via Native Flow — only date &amp;
+                time needed</span></div>
+            <div class="ba-step good"><span class="ba-step-icon">4️⃣</span><span>Logs into portal: sees status, cleaner
+                name, after-photos</span></div>
+            <div class="ba-step good"><span class="ba-step-icon">🔁</span><span>Next booking: only picks date &amp;
+                time. Property info pre-filled.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. FULL ECOSYSTEM MAP -->
+    <section>
+      <div class="section-label">04 — Proposed Ecosystem</div>
+      <h2>Full System Architecture</h2>
+      <p class="section-intro">
+        The proposed system keeps the internal operations stack entirely intact. The customer portal is a new layer that
+        reads from the same data source AppSheet uses — with no disruption to existing workflows.
+      </p>
+
+      <div class="ecosystem-wrapper">
+
+        <!-- Customer World -->
+        <div class="eco-world customer">
+          <div class="eco-world-title">🌐 Customer World — tokyocleaner.jp (New Next.js Website)</div>
+
+          <div class="eco-row">
+            <div class="eco-box new-tool">Home / Services / Pricing / About</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box new-tool">Book Now</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box changed">Native Booking Flow ⌘</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box tool">Stripe (unchanged)</div>
+          </div>
+
+          <div class="eco-row" style="margin-top:12px;">
+            <div class="eco-box new-tool">/portal — Customer Login (Email)</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box new-tool">Dashboard</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box new-tool">Property Registry (once)</div>
+          </div>
+
+          <div class="eco-row">
+            <div class="eco-box new-tool">/portal/orders</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box new-tool">Order History + Status</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box new-tool">After-Photos (from Google Drive)</div>
+          </div>
+
+          <div class="eco-row">
+            <div class="eco-box new-tool">/portal/schedule</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box new-tool">Recurring Schedule View</div>
+            <div class="eco-note">(recurring customers only)</div>
+          </div>
+        </div>
+
+        <!-- Middle: Zapier + Databases -->
+        <div class="eco-connector">
+          <div style="font-size:11px;color:var(--gray-400);margin-bottom:6px;">DATA SYNC LAYER</div>
+          <div class="eco-connector-line">
+            <div style="text-align:right;font-size:11px;color:var(--teal);font-weight:600;">reads fast ↑<br />portal
+              queries</div>
+            <div class="eco-middle-box">
+              Supabase (Portal DB)
+              <div class="eco-middle-label">fast reads · PostgreSQL</div>
+            </div>
+            <div style="font-size:18px;color:var(--gray-300);">⇄</div>
+            <div class="eco-middle-box" style="background:var(--teal);">
+              Zapier (dual-write)
+              <div class="eco-middle-label" style="color:rgba(255,255,255,0.6);">automation hub</div>
+            </div>
+            <div style="font-size:18px;color:var(--gray-300);">⇄</div>
+            <div class="eco-middle-box">
+              Google Sheets
+              <div class="eco-middle-label">source of truth for AppSheet</div>
+            </div>
+            <div style="text-align:left;font-size:11px;color:var(--orange);font-weight:600;">writes ↓<br />all new
+              bookings</div>
+          </div>
+          <div style="font-size:11px;color:var(--gray-400);margin-top:6px;">Native Booking → Zapier → writes to both Supabase
+            + Google Sheets simultaneously</div>
+        </div>
+
+        <!-- Internal World -->
+        <div class="eco-world internal">
+          <div class="eco-world-title">🏢 Internal World — TokyoCleaner Team (AppSheet — Mostly Unchanged)</div>
+
+          <div class="eco-row">
+            <div class="eco-box tool">Admin (AppSheet Desktop)</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box tool">Accept / Decline Orders</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box tool">Assign Cleaner</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box tool">Edit Address + Access Notes</div>
+          </div>
+
+          <div class="eco-row" style="margin-top:8px;">
+            <div class="eco-box tool">Cleaner (Phone Camera)</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box tool">View Calendar (AppSheet Mobile)</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box tool">Navigate to Property</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box changed">After Photos → AppSheet Upload → Google Drive ⚙</div>
+          </div>
+
+          <div class="eco-row" style="margin-top:8px;">
+            <div class="eco-box tool">LINE Group</div>
+            <div class="eco-arrow">→</div>
+            <div class="eco-box tool">Internal Coordination Only</div>
+            <div class="eco-box removed">Photo sharing via LINE (retired)</div>
+          </div>
+
+          <div
+            style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.08);font-size:11px;color:var(--gray-500);">
+            <span
+              style="background:var(--orange-bg);color:#92400E;padding:2px 8px;border-radius:4px;font-weight:600;font-size:10px;">⚙
+              ONE WORKFLOW CHANGE</span>
+            &nbsp; Cleaners currently take photos with their phone and post directly to the LINE group chat. New flow:
+            tap "Upload After Photos" in the AppSheet order view → app saves directly to Google Drive. Same phone, one
+            extra tap, structured storage.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. IMPLEMENTATION PHASES -->
+    <section>
+      <div class="section-label">05 — Implementation Plan</div>
+      <h2>Four Phases to Full Portal</h2>
+      <p class="section-intro">
+        Each phase is independently valuable and can be tested before the next begins. Phase 0 requires no code and can start immediately.
+      </p>
+      <div style="background:var(--teal-light);border:1px solid rgba(14,165,160,0.3);border-left:4px solid var(--teal);border-radius:var(--radius);padding:14px 18px;margin-bottom:12px;font-size:12px;color:var(--gray-700);line-height:1.7;">
+        <strong style="color:var(--teal);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:6px;">&#127959; Tokyo Cleaner First — Scope Philosophy</strong>
+        This project is scoped to maximize <strong>operational benefit for TokyoCleaner's immediate workflows</strong>. Analytics, customer segmentation, and marketing automation are intentionally out of scope for all four phases. The portal is a service tool — not a data harvesting platform. Every feature decision must answer: <em>"Does this make TokyoCleaner's operations cleaner or the customer's experience better?"</em>
+      </div>
+      <div style="background:var(--teal-light);border:1px solid rgba(14,165,160,0.3);border-left:4px solid var(--teal);border-radius:var(--radius);padding:14px 18px;margin-bottom:28px;font-size:12px;color:var(--gray-700);line-height:1.7;">
+        <strong style="color:var(--teal);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:6px;">&#128241; Mobile-First UX for Japan Market</strong>
+        The vast majority of consumer tech usage in Japan is mobile-based. The portal UI/UX must be strictly built <strong>mobile-first</strong>, prioritizing thumb-friendly tap targets, readable Japanese typography on narrow screens, and seamless vertical flows. Desktop is to be treated as a progressively-enhanced secondary layout.
+      </div>
+
+      <!-- Phase 0 -->
+      <div class="phase-card phase-0">
+        <div class="phase-header">
+          <div class="phase-number">0</div>
+          <div class="phase-header-text">
+            <h3>Pre-Build Infrastructure — No Code Required</h3>
+            <p>Start immediately · Est. 1 week · Zero customer disruption</p>
+          </div>
+        </div>
+        <div class="phase-body">
+          <p style="font-size:13px;color:var(--gray-700);">Set up the data infrastructure before writing a single line
+            of portal code. All new bookings made after this phase will automatically populate the portal database.</p>
+          <div class="phase-grid">
+            <div class="phase-item">
+              <h4>Step 1 — After-Photo Workflow Setup</h4>
+              <ul>
+                <li>Add "After Photos" image column to AppSheet Orders view</li>
+                <li>Configure upload destination: Google Drive <code>/Orders/[order_id]/</code></li>
+                <li>Cleaners tap the field in AppSheet → take photo → auto-saves to Drive</li>
+                <li>Test with one cleaner. Retire LINE photo sharing after validation.</li>
+              </ul>
+            </div>
+            <div class="phase-item">
+              <h4>Step 2 — Zapier Dual-Write</h4>
+              <ul>
+                <li>Add a second action to existing Zapier zap</li>
+                <li>New bookings write to Supabase AND Google Sheets</li>
+                <li>Existing zaps remain untouched</li>
+              </ul>
+            </div>
+            <div class="phase-item">
+              <h4>Step 3 — Supabase Setup</h4>
+              <ul>
+                <li>Create Supabase project</li>
+                <li>Define tables: customers, properties, orders, recurring_agreements</li>
+                <li>Set up authentication (email magic link)</li>
+              </ul>
+            </div>
+            <div class="phase-item">
+              <h4>Step 4 — Recurring Agreement Manual Validation</h4>
+              <ul>
+                <li>Admin manually enters recurring_agreements for all current recurring customers</li>
+                <li>Fields: frequency, day/time, assigned cleaner, <strong>custom pricing tier</strong></li>
+                <li>Pricing must be 100% human-verified before being surfaced in the portal</li>
+                <li>Portal acts as read-only <em>View Layer</em> — no customer can edit agreements</li>
+              </ul>
+            </div>
+            <div class="phase-item">
+              <h4>Step 5 — Weekly Reconciliation Script</h4>
+              <ul>
+                <li>Zapier dual-write is reliable but not immune to failures</li>
+                <li>Automated weekly audit compares Google Sheets ⇔ Supabase row by row</li>
+                <li>Any mismatches flagged for manual review before they affect the portal</li>
+                <li>Required before any customer behaviour analysis can be trusted</li>
+              </ul>
+            </div>
+          </div>
+          <div class="deliverable-box">
+            <strong>Deliverable:</strong> All new orders are dual-written to Supabase from day one. Photos go to structured Google Drive. Recurring agreements are manually validated with correct pricing. Weekly reconciliation script is active. Infrastructure is fully ready for portal development.
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 1 -->
+      <div class="phase-card phase-1">
+        <div class="phase-header">
+          <div class="phase-number">1</div>
+          <div class="phase-header-text">
+            <h3>New Website + Property Registry</h3>
+            <p>Main build phase (MVP) · Est. 3–4 weeks · Replaces Webflow</p>
+          </div>
+        </div>
+        <div class="phase-body">
+          <p style="font-size:13px;color:var(--gray-700);">Rebuild tokyocleaner.jp in Next.js and launch the core portal
+            feature: the Property Registry. Customers register their property details once and never need to re-enter
+            them.</p>
+          <div class="phase-grid">
+            <div class="phase-item">
+              <h4>Public Website Pages</h4>
+              <ul>
+                <li>/ — Homepage with services, trust signals</li>
+                <li>/services — Cleaning tiers + pricing</li>
+                <li>/about — Team and brand story</li>
+                <li>/contact — Contact form</li>
+                <li>/book — Native Booking Check-out</li>
+              </ul>
+            </div>
+            <div class="phase-item">
+              <h4>Portal Pages</h4>
+              <ul>
+                <li>/portal/login — Email magic link auth</li>
+                <li>/portal — Customer dashboard</li>
+                <li>/portal/property/consent — Consent gate (shown before form)</li>
+                <li>/portal/property/new — Property registration form</li>
+                <li>/portal/property/edit — Update property details</li>
+                <li>/portal/settings — Manage &amp; delete saved data (APPI)</li>
+              </ul>
+            </div>
+            <div class="phase-item">
+              <h4>Property Registry Fields</h4>
+              <ul>
+                <li>Full address + Google Map link</li>
+                <li>Building name, floor, room number</li>
+                <li>Gate / intercom / key box code</li>
+                <li>How to access (written instructions)</li>
+                <li>Do you have a vacuum cleaner?</li>
+                <li>Property photos (exterior, entrance, door)</li>
+                <li>Additional notes</li>
+              </ul>
+            </div>
+            <div class="phase-item">
+              <h4>Tech Stack</h4>
+              <ul>
+                <li>Frontend: Next.js + Vanilla CSS (No Frameworks required)</li>
+                <li>Backend: FastAPI + Uvicorn</li>
+                <li>Database: Supabase (Managed PostgreSQL + Magic Links)</li>
+                <li>Payments: Stripe API</li>
+                <li>Deployment: DigitalOcean App Platform / Docker</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Technical Bridges Box -->
+          <div style="margin-top:16px;background:#0A1628;color:var(--white);border-radius:var(--radius);padding:16px 20px;border-left:4px solid var(--teal);">
+            <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:10px;">&#9889; High-Priority Technical Bridges — Mandatory for Phase 1</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:12px 14px;">
+                <div style="font-weight:700;color:white;font-size:12px;margin-bottom:6px;">1. Native Booking &amp; Stripe Integration</div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.75);line-height:1.7;">By replacing Calendly with a native booking flow seamlessly integrated into the FastAPI backend, customers never leave the portal. <br/><br/>This allows for direct integration of the <strong>Stripe API</strong> for secure payments during checkout. Customer profiles, payment statuses, and bookings are 100% owned and handled in-house without third-party redirects.</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.06);border-radius:6px;padding:12px 14px;">
+                <div style="font-weight:700;color:white;font-size:12px;margin-bottom:6px;">2. Data Drift Risk — Handled in Phase 0</div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.75);line-height:1.7;">Zapier dual-write keeps Google Sheets and Supabase in sync, but individual zap failures can cause silent data drift — where a booking exists in one database but not the other.<br/><br/>The weekly reconciliation script (Phase 0, Step 5) audits both databases before any customer-facing data is shown, ensuring 100% parity. No behaviour analysis is trusted until the reconciliation baseline is established.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Privacy Consent Box -->
+          <div
+            style="margin-top:16px;background:#1e0a3c;color:var(--white);border-radius:var(--radius);padding:16px 20px;border-left:4px solid #A855F7;">
+            <div
+              style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#D8B4FE;margin-bottom:10px;">
+              🔒 Privacy by Design — APPI Compliance</div>
+            <p style="font-size:12px;line-height:1.7;color:rgba(255,255,255,0.85);margin:0 0 12px;">
+              Property details (address, gate code, access photos) are <strong style="color:white;">highly
+                sensitive</strong>. The portal never stores this data without an explicit, informed opt-in from the
+              customer.
+            </p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:11px;">
+              <div style="background:rgba(255,255,255,0.07);border-radius:6px;padding:10px 12px;">
+                <div style="font-weight:700;color:#D8B4FE;margin-bottom:6px;">Express Cleaning customers</div>
+                <div style="color:rgba(255,255,255,0.75);line-height:1.6;">Full opt-in required. Before the Property
+                  Registry form is shown, a consent screen explains exactly what will be stored and why. Unchecked by
+                  default. Customer chooses: Save details or Fill in each time.</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.07);border-radius:6px;padding:10px 12px;">
+                <div style="font-weight:700;color:#D8B4FE;margin-bottom:6px;">Recurring customers</div>
+                <div style="color:rgba(255,255,255,0.75);line-height:1.6;">Property details already exist in AppSheet.
+                  Portal surfaces them with full transparency: customer can view, edit, or permanently delete everything
+                  stored about their property at any time.</div>
+              </div>
+            </div>
+            <div
+              style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,0.05);border-radius:6px;font-size:11px;color:rgba(255,255,255,0.6);line-height:1.6;">
+              <strong style="color:#D8B4FE;">Consent screen wording (draft):</strong><br />
+              <em>"To save time on future bookings, we can store your property details on your account — including your
+                address, access instructions, and photos. You can view, update, or permanently delete this information
+                at any time from Account Settings."</em><br />
+              <span style="margin-top:6px;display:inline-block;">☐ Yes, save my property details &nbsp;&nbsp; ○ No
+                thanks, I'll fill in each time</span>
+            </div>
+            <div style="margin-top:10px;font-size:10px;color:rgba(255,255,255,0.4);">Database records: <code
+                style="color:#D8B4FE;">property_data_consent</code> (boolean) + <code
+                style="color:#D8B4FE;">consented_at</code> (timestamp) stored per property for legal audit trail.</div>
+          </div>
+
+          <div
+            style="margin-top:12px;background:var(--navy);color:var(--white);border-radius:var(--radius);padding:16px 20px;">
+            <div
+              style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--teal);margin-bottom:8px;">
+              ★ Existing Customer Migration — Included in This Phase</div>
+            <p style="font-size:12px;line-height:1.6;color:rgba(255,255,255,0.85);margin:0;">
+              <strong style="color:var(--white);">Yes — existing customers can use the portal immediately with their
+                current email.</strong><br />
+              During Phase 0 we run a one-time migration script: all existing customer emails and past order history
+              from Google Sheets are imported into Supabase. When an existing customer logs into the portal for the
+              first time using the email they always used to book, they will see their <em>complete order history
+                already there</em> — every past cleaning, date, status. They are then prompted to complete their
+              property profile once. No manual re-entry of history. No confusion.
+            </p>
+            <p style="font-size:11px;color:rgba(255,255,255,0.5);margin:8px 0 0;">
+              Communication to existing customers: <em>"Log in to your new TokyoCleaner portal using [your email]. Your
+                cleaning history is already there."</em>
+            </p>
+          </div>
+
+          <!-- PWA Secret Sauce Box -->
+          <div
+            style="margin-top:16px;background:linear-gradient(135deg, var(--navy), #0A1628);color:var(--white);border-radius:var(--radius);padding:16px 20px;border-left:4px solid var(--orange);">
+            <div
+              style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--orange);margin-bottom:10px;">
+              ⭐ The Secret Sauce — PWA Strategy</div>
+            <p style="font-size:12px;line-height:1.7;color:rgba(255,255,255,0.85);margin:0;">
+              To strictly solve the <em>"customers disappear after booking"</em> problem, the portal will be configured as a <strong>Progressive Web App (PWA)</strong> during Phase 1. <br/><br/>
+              By bypassing the App Store entirely, TokyoCleaner gains a dedicated App Icon on the customer's phone via an in-app "Save to Homescreen" prompt. One tap instantly opens the portal in full-screen mode without browser UI — keeping TokyoCleaner permanently 1-tap away and drastically lowering the friction to re-book, view after-photos, and check schedules.
+            </p>
+          </div>
+          <div class="deliverable-box" style="margin-top:12px;">
+            <strong>Deliverable:</strong> tokyocleaner.jp is live. Webflow is retired. Existing customers log in and see
+            their full history immediately. New customers register property once.
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="phase-card phase-2">
+        <div class="phase-header">
+          <div class="phase-number">2</div>
+          <div class="phase-header-text">
+            <h3>Order History + After-Photos</h3>
+            <p>High-value customer feature · Est. 1 week (Parallel with Phase 1)</p>
+          </div>
+        </div>
+        <div class="phase-body">
+          <p style="font-size:13px;color:var(--gray-700);">Connect the portal to the orders database. Customers see
+            every past and upcoming cleaning, its status, and photos taken by the cleaner after completing the job.</p>
+          <div class="phase-grid">
+            <div class="phase-item">
+              <h4>Pages Added</h4>
+              <ul>
+                <li>/portal/orders — Full order history list</li>
+                <li>/portal/orders/[id] — Order detail view</li>
+              </ul>
+            </div>
+            <div class="phase-item">
+              <h4>Data Shown Per Order</h4>
+              <ul>
+                <li>Date &amp; time of cleaning</li>
+                <li>Assigned cleaner (first name)</li>
+                <li>Status: Scheduled → Confirmed → In Progress → Completed</li>
+                <li>After-photos from Google Drive</li>
+              </ul>
+            </div>
+          </div>
+          <div class="deliverable-box">
+            <strong>Deliverable:</strong> Customers can view their complete cleaning history with after-photos.
+            Eliminates the need to message for status updates.
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="phase-card phase-3">
+        <div class="phase-header">
+          <div class="phase-number">3</div>
+          <div class="phase-header-text">
+            <h3>Recurring Customer Dashboard</h3>
+            <p>Retention feature · Pushed to V2 (Post-May Launch)</p>
+          </div>
+        </div>
+        <div class="phase-body">
+          <p style="font-size:13px;color:var(--gray-700);">Give recurring customers a dedicated view of their agreed
+            cleaning schedule, so they never need to ask when their next clean is or who is coming.</p>
+          <div class="phase-grid">
+            <div class="phase-item">
+              <h4>Features</h4>
+              <ul>
+                <li>Display agreed frequency (e.g., every 2nd Tuesday)</li>
+                <li>Assigned cleaner name</li>
+                <li>Next 4 upcoming sessions</li>
+                <li>"Request a change" → email to admin</li>
+              </ul>
+            </div>
+            <div class="phase-item">
+              <h4>Requirement</h4>
+              <ul>
+                <li>recurring_agreements data populated in Phase 0</li>
+                <li>Admin manages this via Google Sheets (viewed in AppSheet)</li>
+                <li>No new AppSheet views needed</li>
+              </ul>
+            </div>
+          </div>
+          <div class="deliverable-box">
+            <strong>Deliverable:</strong> Recurring customers have full transparency into their cleaning schedule
+            without contacting the team.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW: PROJECT TIMELINE -->
+    <section>
+      <div class="section-label">06 — Project Timeline</div>
+      <h2>Estimated Schedule</h2>
+      <p class="section-intro">
+        Total estimated build time: <strong>6 weeks</strong>. This is an accelerated MVP timeline strictly targeting a <strong>late-May deployment</strong>. The UI is already pre-built, allowing immediate backend API focus.
+      </p>
+
+      <div style="margin-top:8px;">
+
+        <!-- Timeline row -->
+        <div style="display:grid;grid-template-columns:120px 1fr auto;gap:0;align-items:stretch;margin-bottom:2px;">
+          <div
+            style="background:var(--gray-500);color:white;border-radius:8px 0 0 8px;padding:14px 16px;display:flex;align-items:center;justify-content:center;">
+            <div style="text-align:center;">
+              <div style="font-size:20px;font-weight:800;line-height:1;">0</div>
+              <div style="font-size:9px;letter-spacing:1px;opacity:0.7;text-transform:uppercase;margin-top:2px;">Phase
+              </div>
+            </div>
+          </div>
+          <div style="background:var(--gray-50);border:1px solid var(--gray-200);border-left:none;padding:14px 20px;">
+            <div style="font-weight:700;font-size:13px;color:var(--navy);margin-bottom:2px;">Pre-Build Infrastructure
+            </div>
+            <div style="font-size:12px;color:var(--gray-500);">AppSheet photo workflow · Supabase setup · Zapier
+              dual-write · Historical data migration · Recurring agreements data entry</div>
+          </div>
+          <div
+            style="background:var(--gray-100);border:1px solid var(--gray-200);border-left:none;border-radius:0 8px 8px 0;padding:14px 20px;display:flex;align-items:center;">
+            <div style="text-align:right;">
+              <div style="font-size:16px;font-weight:800;color:var(--gray-700);">2–3 wks</div>
+              <div style="font-size:10px;color:var(--gray-500);white-space:nowrap;">No code. Start now.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:4px;background:linear-gradient(to right,var(--gray-200),var(--teal));margin:2px 0;"></div>
+
+        <div style="display:grid;grid-template-columns:120px 1fr auto;gap:0;align-items:stretch;margin-bottom:2px;">
+          <div
+            style="background:var(--teal);color:white;border-radius:8px 0 0 8px;padding:14px 16px;display:flex;align-items:center;justify-content:center;">
+            <div style="text-align:center;">
+              <div style="font-size:20px;font-weight:800;line-height:1;">1</div>
+              <div style="font-size:9px;letter-spacing:1px;opacity:0.7;text-transform:uppercase;margin-top:2px;">Phase
+              </div>
+            </div>
+          </div>
+          <div
+            style="background:var(--teal-light);border:1px solid rgba(14,165,160,0.3);border-left:none;padding:14px 20px;">
+            <div style="font-weight:700;font-size:13px;color:var(--navy);margin-bottom:2px;">New Website + Property
+              Registry</div>
+            <div style="font-size:12px;color:var(--gray-500);">5 public pages (replaces Webflow) · Email auth · Portal
+              shell · Property registration form · Photo upload · Existing customer migration</div>
+          </div>
+          <div
+            style="background:#D1FAF8;border:1px solid rgba(14,165,160,0.3);border-left:none;border-radius:0 8px 8px 0;padding:14px 20px;display:flex;align-items:center;">
+            <div style="text-align:right;">
+              <div style="font-size:16px;font-weight:800;color:var(--teal);">5–7 wks</div>
+              <div style="font-size:10px;color:var(--gray-500);white-space:nowrap;">Largest phase.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:4px;background:linear-gradient(to right,var(--teal),#7C3AED);margin:2px 0;"></div>
+
+        <div style="display:grid;grid-template-columns:120px 1fr auto;gap:0;align-items:stretch;margin-bottom:2px;">
+          <div
+            style="background:#7C3AED;color:white;border-radius:8px 0 0 8px;padding:14px 16px;display:flex;align-items:center;justify-content:center;">
+            <div style="text-align:center;">
+              <div style="font-size:20px;font-weight:800;line-height:1;">2</div>
+              <div style="font-size:9px;letter-spacing:1px;opacity:0.7;text-transform:uppercase;margin-top:2px;">Phase
+              </div>
+            </div>
+          </div>
+          <div style="background:#F5F3FF;border:1px solid #DDD6FE;border-left:none;padding:14px 20px;">
+            <div style="font-weight:700;font-size:13px;color:var(--navy);margin-bottom:2px;">Order History +
+              After-Photos</div>
+            <div style="font-size:12px;color:var(--gray-500);">Order list · Order detail view · Status tracking ·
+              After-photo gallery from Google Drive · Historical order display</div>
+          </div>
+          <div
+            style="background:#EDE9FE;border:1px solid #DDD6FE;border-left:none;border-radius:0 8px 8px 0;padding:14px 20px;display:flex;align-items:center;">
+            <div style="text-align:right;">
+              <div style="font-size:16px;font-weight:800;color:#7C3AED;">2–3 wks</div>
+              <div style="font-size:10px;color:var(--gray-500);white-space:nowrap;">High customer ROI.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:4px;background:linear-gradient(to right,#7C3AED,var(--orange));margin:2px 0;"></div>
+
+        <div style="display:grid;grid-template-columns:120px 1fr auto;gap:0;align-items:stretch;">
+          <div
+            style="background:var(--orange);color:white;border-radius:8px 0 0 8px;padding:14px 16px;display:flex;align-items:center;justify-content:center;">
+            <div style="text-align:center;">
+              <div style="font-size:20px;font-weight:800;line-height:1;">3</div>
+              <div style="font-size:9px;letter-spacing:1px;opacity:0.7;text-transform:uppercase;margin-top:2px;">Phase
+              </div>
+            </div>
+          </div>
+          <div
+            style="background:var(--orange-bg);border:1px solid rgba(249,115,22,0.2);border-left:none;padding:14px 20px;">
+            <div style="font-weight:700;font-size:13px;color:var(--navy);margin-bottom:2px;">Recurring Customer
+              Dashboard</div>
+            <div style="font-size:12px;color:var(--gray-500);">Schedule view · Assigned cleaner display · Next 4
+              sessions · Request change flow</div>
+          </div>
+          <div
+            style="background:#FFF7ED;border:1px solid rgba(249,115,22,0.2);border-left:none;border-radius:0 8px 8px 0;padding:14px 20px;display:flex;align-items:center;">
+            <div style="text-align:right;">
+              <div style="font-size:16px;font-weight:800;color:var(--orange);">2–3 wks</div>
+              <div style="font-size:10px;color:var(--gray-500);white-space:nowrap;">Recurring retention.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total -->
+        <div
+          style="margin-top:16px;background:var(--navy);color:white;border-radius:var(--radius);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--teal);font-weight:600;">
+              Total Estimated Timeline</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px;">From kick-off to full portal with
+              recurring dashboard</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:28px;font-weight:800;letter-spacing:-1px;">11–16 <span
+                style="font-size:14px;font-weight:500;color:rgba(255,255,255,0.5);">weeks</span></div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);">Value delivered at end of each phase</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. DATA SCHEMA -->
+    <section>
+      <div class="section-label">06 — Data Architecture</div>
+      <h2>Database Schema</h2>
+      <p class="section-intro">
+        Two new Google Sheets tabs + a Supabase mirror. The existing Orders and staff-related sheets remain unchanged.
+        Zapier links everything together.
+      </p>
+
+      <div class="schema-section-title">
+        customers
+        <span class="schema-badge new">NEW</span>
+      </div>
+      <table class="schema-table">
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="new-field">
+            <td>id</td>
+            <td class="field-type">uuid</td>
+            <td>Primary key (auto-generated)</td>
+          </tr>
+          <tr class="new-field">
+            <td>email</td>
+            <td class="field-type">text</td>
+            <td>Login identifier — must match booking email</td>
+          </tr>
+          <tr class="new-field">
+            <td>name</td>
+            <td class="field-type">text</td>
+            <td>Full name</td>
+          </tr>
+          <tr class="new-field">
+            <td>phone</td>
+            <td class="field-type">text</td>
+            <td>Phone number</td>
+          </tr>
+          <tr class="new-field">
+            <td>customer_type</td>
+            <td class="field-type">enum</td>
+            <td>"new" | "recurring" | "express" — three distinct service types</td>
+          </tr>
+          <tr class="new-field">
+            <td>created_at</td>
+            <td class="field-type">timestamp</td>
+            <td>Registration date</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="schema-section-title">
+        properties
+        <span class="schema-badge new">NEW</span>
+      </div>
+      <table class="schema-table">
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="new-field">
+            <td>id</td>
+            <td class="field-type">uuid</td>
+            <td>Primary key</td>
+          </tr>
+          <tr class="new-field">
+            <td>customer_id</td>
+            <td class="field-type">uuid → customers</td>
+            <td>Foreign key to customer</td>
+          </tr>
+          <tr class="new-field">
+            <td>address</td>
+            <td class="field-type">text</td>
+            <td>Full Japanese-format address</td>
+          </tr>
+          <tr class="new-field">
+            <td>map_url</td>
+            <td class="field-type">text</td>
+            <td>Google Maps link</td>
+          </tr>
+          <tr class="new-field">
+            <td>building</td>
+            <td class="field-type">text</td>
+            <td>Building name</td>
+          </tr>
+          <tr class="new-field">
+            <td>room</td>
+            <td class="field-type">text</td>
+            <td>Floor / room number</td>
+          </tr>
+          <tr class="new-field">
+            <td>access_notes</td>
+            <td class="field-type">text</td>
+            <td>Gate code, intercom, key box instructions</td>
+          </tr>
+          <tr class="new-field">
+            <td>has_vacuum</td>
+            <td class="field-type">boolean</td>
+            <td>Does the customer own a vacuum cleaner?</td>
+          </tr>
+          <tr class="new-field">
+            <td>photos</td>
+            <td class="field-type">text[]</td>
+            <td>Array of Supabase Storage URLs (exterior, entrance, door)</td>
+          </tr>
+          <tr class="new-field">
+            <td>additional_notes</td>
+            <td class="field-type">text</td>
+            <td>Free-form notes</td>
+          </tr>
+          <tr class="new-field" style="background:#F5F3FF;">
+            <td>property_data_consent</td>
+            <td class="field-type" style="color:#7C3AED;">boolean</td>
+            <td>🔒 Explicit opt-in to store property details — false by default, never assumed</td>
+          </tr>
+          <tr class="new-field" style="background:#F5F3FF;">
+            <td>consented_at</td>
+            <td class="field-type" style="color:#7C3AED;">timestamp</td>
+            <td>🔒 When consent was given — required for APPI audit trail. Null if not consented.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="schema-section-title">
+        orders
+        <span class="schema-badge existing">EXISTING — ADD 2 COLUMNS</span>
+      </div>
+      <table class="schema-table">
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>... existing columns ...</td>
+            <td class="field-type">—</td>
+            <td>All existing AppSheet columns remain unchanged</td>
+          </tr>
+          <tr class="new-field">
+            <td>customer_id</td>
+            <td class="field-type">uuid → customers</td>
+            <td>NEW — links order to customer profile</td>
+          </tr>
+          <tr class="new-field">
+            <td>after_photos_url</td>
+            <td class="field-type">text</td>
+            <td>NEW — Google Drive folder URL for cleaner after-photos</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="schema-section-title">
+        recurring_agreements
+        <span class="schema-badge new">NEW — Admin manages in Sheets</span>
+      </div>
+      <table class="schema-table">
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="new-field">
+            <td>id</td>
+            <td class="field-type">uuid</td>
+            <td>Primary key</td>
+          </tr>
+          <tr class="new-field">
+            <td>customer_id</td>
+            <td class="field-type">uuid → customers</td>
+            <td>Which customer this agreement belongs to</td>
+          </tr>
+          <tr class="new-field">
+            <td>frequency</td>
+            <td class="field-type">text</td>
+            <td>e.g., "bi-weekly", "monthly"</td>
+          </tr>
+          <tr class="new-field">
+            <td>day_of_week</td>
+            <td class="field-type">text</td>
+            <td>e.g., "Tuesday"</td>
+          </tr>
+          <tr class="new-field">
+            <td>time</td>
+            <td class="field-type">time</td>
+            <td>e.g., "10:00"</td>
+          </tr>
+          <tr class="new-field">
+            <td>cleaner_name</td>
+            <td class="field-type">text</td>
+            <td>Dedicated cleaner's name</td>
+          </tr>
+          <tr class="new-field">
+            <td>active</td>
+            <td class="field-type">boolean</td>
+            <td>Is this agreement currently active?</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 7. WHAT CHANGES -->
+    <section>
+      <div class="section-label">07 — Change Impact</div>
+      <h2>What Changes. What Doesn't.</h2>
+      <p class="section-intro">
+        The internal operation stack is almost entirely preserved. This is a customer-layer addition, not an operations
+        overhaul.
+      </p>
+
+      <table class="changes-table">
+        <thead>
+          <tr>
+            <th>Tool / Workflow</th>
+            <th>Status</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Native Booking System</strong></td>
+            <td><span class="check">✓ Unchanged</span></td>
+            <td>Stays as the sole booking entry point. Re-embedded in new website.</td>
+          </tr>
+          <tr>
+            <td><strong>Zapier</strong></td>
+            <td><span style="color:var(--orange);font-weight:700;">⚙ Minor addition</span></td>
+            <td>Existing zaps untouched. One new action step added: dual-write new bookings to Supabase.</td>
+          </tr>
+          <tr>
+            <td><strong>AppSheet (Admin Desktop)</strong></td>
+            <td><span class="check">✓ Unchanged</span></td>
+            <td>All existing views and workflows remain. Admin will also fill recurring_agreements data (one-time
+              effort).</td>
+          </tr>
+          <tr>
+            <td><strong>AppSheet (Cleaner Mobile)</strong></td>
+            <td><span style="color:var(--orange);font-weight:700;">⚙ One workflow change</span></td>
+            <td>Photo upload destination changes from LINE to Google Drive. One training session required.</td>
+          </tr>
+          <tr>
+            <td><strong>Google Sheets</strong></td>
+            <td><span style="color:var(--orange);font-weight:700;">⚙ 2 new tabs</span></td>
+            <td>customers and properties tabs added. Existing tabs untouched. orders tab gets 2 new columns.</td>
+          </tr>
+          <tr>
+            <td><strong>Stripe</strong></td>
+            <td><span class="check">✓ Unchanged</span></td>
+            <td>Payment processing remains entirely untouched.</td>
+          </tr>
+          <tr>
+            <td><strong>Webflow</strong></td>
+            <td><span class="cross">✗ Retired</span></td>
+            <td>Replaced by the new Next.js website on the same domain (tokyocleaner.jp).</td>
+          </tr>
+          <tr>
+            <td><strong>LINE Group</strong></td>
+            <td><span style="color:var(--orange);font-weight:700;">⚙ Scope narrows</span></td>
+            <td>Remains for internal coordination. Photo sharing moves to structured Google Drive. No customer LINE
+              involvement.</td>
+          </tr>
+          <tr>
+            <td><strong>Customer Portal</strong></td>
+            <td><span class="tag tag-teal">✦ New</span></td>
+            <td>New at tokyocleaner.jp/portal. Email login. Property Registry, Order History, Recurring Dashboard.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 8. TECH STACK -->
+    <section>
+      <div class="section-label">08 — Technology</div>
+      <h2>Technology Stack</h2>
+      <p class="section-intro">
+        All tools are proven, low-cost or free at the scale of this project, and chosen for their ability to integrate
+        with the existing Google Workspace ecosystem.
+      </p>
+
+      <div class="tech-grid">
+        <div class="tech-card">
+          <div class="tech-card-category">Framework</div>
+          <div class="tech-card-name">Next.js 15</div>
+          <div class="tech-card-desc">React framework for both the public website and secure portal pages on one domain.
+          </div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-category">Database + Auth</div>
+          <div class="tech-card-name">Supabase</div>
+          <div class="tech-card-desc">PostgreSQL database, email magic link auth, and file storage. Required at 6,400
+            orders/year scale.</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-category">Hosting</div>
+          <div class="tech-card-name">DigitalOcean</div>
+          <div class="tech-card-desc">Zero-config deployment for Next.js. Global CDN. Scales automatically.</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-category">Automation</div>
+          <div class="tech-card-name">Zapier</div>
+          <div class="tech-card-desc">Existing automations unchanged. One new step added for Supabase dual-write.</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-category">Email</div>
+          <div class="tech-card-name">Resend</div>
+          <div class="tech-card-desc">Transactional email for magic link login. Simple API, generous free tier.</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-category">Photo Storage</div>
+          <div class="tech-card-name">Google Drive</div>
+          <div class="tech-card-desc">Already in the Google ecosystem. AppSheet uploads cleaner photos here directly. No
+            new tool required.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. SUMMARY -->
+    <section>
+      <div class="section-label">09 — Summary</div>
+      <h2>Why This Is the Right Move</h2>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;">
+        <div
+          style="padding:24px;background:var(--teal-light);border:1px solid rgba(14,165,160,0.3);border-radius:var(--radius-lg);">
+          <div style="font-size:24px;margin-bottom:10px;">🎯</div>
+          <h3 style="margin-bottom:8px;">For Customers</h3>
+          <p style="font-size:13px;color:var(--gray-700);line-height:1.6;">Register property details once. Never fill
+            out the same form again. See order history and after-photos. Know when recurring cleans are scheduled — all
+            without messaging anyone.</p>
+        </div>
+        <div
+          style="padding:24px;background:var(--orange-bg);border:1px solid rgba(249,115,22,0.2);border-radius:var(--radius-lg);">
+          <div style="font-size:24px;margin-bottom:10px;">🏢</div>
+          <h3 style="margin-bottom:8px;">For TokyoCleaner</h3>
+          <p style="font-size:13px;color:var(--gray-700);line-height:1.6;">Build an owned customer data asset. Eliminate
+            manual address corrections. Understand customers better. Establish the data foundation for future growth —
+            all without disrupting the existing operation.</p>
+        </div>
+        <div
+          style="padding:24px;background:var(--green-bg);border:1px solid rgba(22,163,74,0.2);border-radius:var(--radius-lg);">
+          <div style="font-size:24px;margin-bottom:10px;">⚡</div>
+          <h3 style="margin-bottom:8px;">Low Disruption</h3>
+          <p style="font-size:13px;color:var(--gray-700);line-height:1.6;">AppSheet, Stripe, and Zapier remain
+            unchanged. Only one internal workflow changes: cleaners upload photos to Drive instead of LINE. One training
+            session required.</p>
+        </div>
+        <div
+          style="padding:24px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-lg);">
+          <div style="font-size:24px;margin-bottom:10px;">📈</div>
+          <h3 style="margin-bottom:8px;">Built to Scale</h3>
+          <p style="font-size:13px;color:var(--gray-700);line-height:1.6;">Supabase handles thousands of concurrent
+            users. The portal runs on DigitalOcean's App Platform. As the customer base grows, the infrastructure scales without
+            re-architecting.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="doc-footer">
+      TokyoCleaner — Customer Portal Project Proposal &nbsp;·&nbsp; April 2026 &nbsp;·&nbsp; Confidential
+    </div>
+
+  </div><!-- /page -->
+
+  <!-- Print Button -->
+  <button class="print-btn" onclick="window.print()">
+    🖨 Print / Save as PDF
+  </button>
+
+</body>
+
+</html>

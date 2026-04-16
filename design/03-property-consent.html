@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TokyoCleaner Portal — Privacy Consent (Design Mockup)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       DESIGN TOKENS (Security-focused Purple Theme)
+    ============================================================ */
+    :root {
+      --primary:     #7C3AED; /* Purple */
+      --primary-dark:#5B21B6;
+      --primary-light:#F5F3FF;
+      --teal:        #0EA5A0;
+      --navy:        #0F1F3D;
+      --gray-50:     #F9FAFB;
+      --gray-100:    #F3F4F6;
+      --gray-200:    #E5E7EB;
+      --gray-300:    #D1D5DB;
+      --gray-400:    #9CA3AF;
+      --gray-500:    #6B7280;
+      --gray-700:    #374151;
+      --gray-800:    #1F2937;
+      --gray-900:    #111827;
+      --white:       #FFFFFF;
+      --font:        'Inter', 'Noto Sans JP', -apple-system, sans-serif;
+      --radius:      8px;
+      --radius-lg:   12px;
+      --shadow-lg:   0 10px 15px rgba(0,0,0,0.06), 0 4px 6px rgba(0,0,0,0.04);
+      --transition:  150ms ease;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      color: var(--gray-800);
+      background: var(--gray-50);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    body[data-lang="en"] .lang-jp { display: none !important; }
+    body[data-lang="jp"] .lang-en { display: none !important; }
+
+    /* ============================================================
+       CONSENT CARD
+    ============================================================ */
+    .consent-container {
+      width: 100%;
+      max-width: 520px;
+      position: relative;
+    }
+
+    .consent-card {
+      background: var(--white);
+      padding: 40px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-200);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .top-controls {
+      position: absolute;
+      top: -50px;
+      right: 0;
+    }
+
+    .lang-toggle {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 100px;
+      display: flex;
+      padding: 3px;
+    }
+
+    .lang-toggle button {
+      padding: 4px 12px;
+      border: none;
+      background: none;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 100px;
+      color: var(--gray-400);
+    }
+
+    .lang-toggle button.active {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    /* CONTENT */
+    .header-icon {
+      width: 56px; height: 56px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--gray-900);
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .intro-text {
+      color: var(--gray-600);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    /* OPTION CARDS */
+    .option-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .option-card {
+      user-select: none;
+      cursor: pointer;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      transition: all var(--transition);
+      position: relative;
+    }
+
+    .option-card:hover {
+      border-color: var(--primary);
+      background: var(--gray-25);
+    }
+
+    .option-card.selected {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .radio-circle {
+      width: 22px; height: 22px;
+      border: 2px solid var(--gray-300);
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--white);
+      transition: all var(--transition);
+    }
+
+    .option-card.selected .radio-circle {
+      border-color: var(--primary);
+    }
+
+    .radio-dot {
+      width: 10px; height: 10px;
+      background: var(--primary);
+      border-radius: 50%;
+      transform: scale(0);
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .option-card.selected .radio-dot {
+      transform: scale(1);
+    }
+
+    .option-info {
+        flex: 1;
+    }
+
+    .option-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .option-desc {
+      font-size: 13px;
+      color: var(--gray-500);
+      line-height: 1.4;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .btn-primary:disabled {
+      background: var(--gray-200);
+      color: var(--gray-400);
+      cursor: not-allowed;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      font-size: 12px;
+      color: var(--gray-400);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ANNOTATION STYLES */
+    .anno-toggle {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: var(--navy);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 100px;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 4px 12px rgba(15,31,61,0.2);
+      z-index: 1000;
+    }
+    .anno-panel {
+      position: fixed;
+      top: 0; right: -400px; bottom: 0;
+      width: 400px; background: var(--white);
+      box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+      z-index: 1001; padding: 32px; overflow-y: auto;
+      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .anno-panel.open { right: 0; }
+    .anno-header { border-bottom: 2px solid var(--gray-100); padding-bottom: 16px; margin-bottom: 24px; }
+    .anno-section { margin-bottom: 32px; }
+    .anno-title { font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+    .anno-item { background: var(--gray-50); border-radius: 8px; padding: 12px; margin-bottom: 12px; font-size: 12px; }
+    .anno-code { font-family: monospace; background: var(--gray-200); padding: 2px 4px; border-radius: 4px; }
+
+  </style>
+</head>
+<body data-lang="en">
+
+  <div class="consent-container">
+    <div class="top-controls">
+      <div class="lang-toggle">
+        <button id="lang-btn-en" class="active" onclick="setLang('en')">EN</button>
+        <button id="lang-btn-jp" onclick="setLang('jp')">JP</button>
+      </div>
+    </div>
+
+    <div class="consent-card">
+      <div class="header-icon">🔒</div>
+      <h1>
+        <span class="lang-en">Privacy & Security</span>
+        <span class="lang-jp">プライバシーと安全</span>
+      </h1>
+      <p class="intro-text">
+        <span class="lang-en">To save time on future bookings, we can store your property details on your account — including your address, access instructions, and photos.</span>
+        <span class="lang-jp">今後の予約をスムーズにするために、ご自宅の住所やアクセス方法、お写真などをアカウントに保存することができます。</span>
+      </p>
+
+      <div class="option-grid">
+        <div class="option-card" id="opt-save" onclick="selectOption('save')">
+          <div class="radio-circle"><div class="radio-dot"></div></div>
+          <div class="option-info">
+            <span class="option-title">
+              <span class="lang-en">Yes, save my property details</span>
+              <span class="lang-jp">はい、物件情報を保存する</span>
+            </span>
+            <span class="option-desc">
+              <span class="lang-en">Register once. Pre-filled for every future booking.</span>
+              <span class="lang-jp">一度登録すれば、次回から入力不要になります。</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="option-card" id="opt-none" onclick="selectOption('none')">
+          <div class="radio-circle"><div class="radio-dot"></div></div>
+          <div class="option-info">
+            <span class="option-title">
+              <span class="lang-en">No thanks, I'll fill in each time</span>
+              <span class="lang-jp">いいえ、毎回手動で入力する</span>
+            </span>
+            <span class="option-desc">
+              <span class="lang-en">No sensitive property data will be saved.</span>
+              <span class="lang-jp">機密性の高い物件情報は保存されません。</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <button id="continue-btn" class="btn-primary" disabled onclick="handleContinue()">
+        <span class="lang-en">Continue</span>
+        <span class="lang-jp">次へ進む</span>
+      </button>
+
+      <div class="footer-note">
+        <span class="lang-en">You can view, update, or permanently delete this information at any time from Account Settings.</span>
+        <span class="lang-jp">保存された情報は、アカウント設定からいつでも確認・更新・一括削除が可能です。</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="anno-toggle" onclick="document.getElementById('annoPanel').classList.toggle('open')">
+    🔧 <span class="lang-en">Engineer Notes</span><span class="lang-jp">開発者ノート</span>
+  </button>
+
+  <div class="anno-panel" id="annoPanel">
+    <div class="anno-header">
+      <h3>🔧 Consent Gate Implementation</h3>
+      <p>APPI Compliance Logic</p>
+    </div>
+
+    <div class="anno-section">
+      <div class="anno-title">Database Action</div>
+      <div class="anno-item">
+        <strong>If "Yes" selected:</strong><br>
+        Update <code class="anno-code">properties</code> table for the user:<br>
+        - <code class="anno-code">property_data_consent = true</code><br>
+        - <code class="anno-code">consented_at = NOW()</code><br>
+        Redirect to: <code class="anno-code">/portal/property/new</code>
+      </div>
+      <div class="anno-item">
+        <strong>If "No" selected:</strong><br>
+        Update <code class="anno-code">properties</code> table for the user:<br>
+        - <code class="anno-code">property_data_consent = false</code><br>
+        Redirect to: <code class="anno-code">/portal/dashboard</code>
+      </div>
+    </div>
+
+    <div class="anno-section">
+      <div class="anno-title">Legal Audit (Japan)</div>
+      <div class="anno-item">
+        <strong>Audit Trail:</strong> In production, logging the IP address and User Agent at the time of clicking "Continue" is highly recommended for APPI evidence.
+      </div>
+    </div>
+
+    <div class="anno-section">
+      <div class="anno-title">UI Conditional Logic</div>
+      <div class="anno-item">
+        This screen should only appear for **Express Cleaning** customers who have not yet consented. **Recurring** customers are handled transparently via the dashboard property card.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedType = null;
+
+    function setLang(lang) {
+      document.body.setAttribute('data-lang', lang);
+      document.getElementById('lang-btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('lang-btn-jp').classList.toggle('active', lang === 'jp');
+    }
+
+    function selectOption(type) {
+      selectedType = type;
+      document.getElementById('opt-save').classList.toggle('selected', type === 'save');
+      document.getElementById('opt-none').classList.toggle('selected', type === 'none');
+      document.getElementById('continue-btn').disabled = false;
+    }
+
+    function handleContinue() {
+        if (selectedType === 'save') {
+            alert('→ Redirecting to Property Registration form (Screen 04)');
+        } else {
+            alert('→ Consented FALSE. Redirecting to Dashboard.');
+        }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.venv/
+
+# Environment & secrets
+.env
+.env.local
+.env*.local
+portal/.env.local
+
+# Build output
+dist/
+dist-ssr/
+.next/
+portal/.next/
+out/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Data exports (sensitive business data)
+data_exports/
+*.csv
+
+# Python scripts (migration tools, not part of portal)
+*.pyc
+__pycache__/
+migrate_data.py
+migrate_final.py
+reimport_bookings.py
+check_data.py
+inspect_schema.py
+fix.py
+
+# PDF page images (extracted from proposal)
+pdf_page*.png
+
+# Misc
+*.local

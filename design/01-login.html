@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TokyoCleaner Portal — Login (Magic Link Mockup)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       DESIGN TOKENS (Shared with Dashboard)
+    ============================================================ */
+    :root {
+      --teal:        #0EA5A0;
+      --teal-dark:   #0B8A86;
+      --teal-light:  #E6F8F7;
+      --navy:        #0F1F3D;
+      --navy-mid:    #1A3461;
+      --gray-50:     #F9FAFB;
+      --gray-100:    #F3F4F6;
+      --gray-200:    #E5E7EB;
+      --gray-300:    #D1D5DB;
+      --gray-400:    #9CA3AF;
+      --gray-500:    #6B7280;
+      --gray-800:    #1F2937;
+      --gray-900:    #111827;
+      --white:       #FFFFFF;
+      --font:        'Inter', 'Noto Sans JP', -apple-system, sans-serif;
+      --radius:      8px;
+      --radius-lg:   12px;
+      --shadow-lg:   0 10px 15px rgba(0,0,0,0.06), 0 4px 6px rgba(0,0,0,0.04);
+      --transition:  150ms ease;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      color: var(--gray-800);
+      background: var(--gray-50);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* LANGUAGE TOGGLE LOGIC */
+    body[data-lang="en"] .lang-jp { display: none !important; }
+    body[data-lang="jp"] .lang-en { display: none !important; }
+
+    /* ============================================================
+       LOGIN CARD
+    ============================================================ */
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+    }
+
+    .login-card {
+      background: var(--white);
+      padding: 40px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-200);
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .logo-icon {
+      width: 44px; height: 44px;
+      background: var(--teal);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+
+    .logo-text {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--gray-900);
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text span { color: var(--teal); }
+
+    .login-header h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .login-header p {
+      font-size: 14px;
+      color: var(--gray-500);
+      margin-bottom: 32px;
+    }
+
+    /* FORM STYLES */
+    .form-group {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 15px;
+      transition: border-color var(--transition);
+      outline: none;
+    }
+
+    .form-input:focus {
+      border-color: var(--teal);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      background: var(--teal-dark);
+    }
+
+    /* STATES */
+    #state-sent { display: none; }
+    
+    .success-icon {
+      width: 64px; height: 64px;
+      background: var(--teal-light);
+      color: var(--teal);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 24px;
+    }
+
+    .resend-hint {
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+
+    .resend-hint a {
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* BOTTOM CONTROLS */
+    .top-controls {
+      position: absolute;
+      top: -60px;
+      right: 0;
+      display: flex;
+      gap: 12px;
+    }
+
+    .lang-toggle {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 100px;
+      display: flex;
+      padding: 3px;
+    }
+
+    .lang-toggle button {
+      padding: 4px 12px;
+      border: none;
+      background: none;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 100px;
+      color: var(--gray-400);
+      transition: all var(--transition);
+    }
+
+    .lang-toggle button.active {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    /* ANNOTATION STYLES (Shared) */
+    .anno-toggle {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--navy);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(15,31,61,0.2);
+      z-index: 1000;
+    }
+    .anno-panel {
+      position: fixed;
+      top: 0; right: -400px; bottom: 0;
+      width: 400px;
+      background: var(--white);
+      box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+      z-index: 1001;
+      padding: 32px;
+      overflow-y: auto;
+      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .anno-panel.open { right: 0; }
+    .anno-header { border-bottom: 2px solid var(--gray-100); padding-bottom: 16px; margin-bottom: 24px; }
+    .anno-section { margin-bottom: 32px; }
+    .anno-title { font-size: 12px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+    .anno-item { background: var(--gray-50); border-radius: 8px; padding: 12px; margin-bottom: 12px; font-size: 12px; }
+    .anno-code { font-family: monospace; background: var(--gray-200); padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body data-lang="en">
+
+  <div class="login-container">
+    <div class="top-controls">
+      <div class="lang-toggle">
+        <button id="lang-btn-en" class="active" onclick="setLang('en')">EN</button>
+        <button id="lang-btn-jp" onclick="setLang('jp')">JP</button>
+      </div>
+    </div>
+
+    <!-- STATE 1: INPUT EMAIL -->
+    <div class="login-card" id="state-input">
+      <div class="logo">
+        <div class="logo-icon">🧹</div>
+        <div class="logo-text">Tokyo<span>Cleaner</span></div>
+      </div>
+      
+      <div class="login-header">
+        <h1>
+          <span class="lang-en">Welcome back</span>
+          <span class="lang-jp">お帰りなさい</span>
+        </h1>
+        <p>
+          <span class="lang-en">Enter your email to access your portal.</span>
+          <span class="lang-jp">メールアドレスを入力してログインしてください。</span>
+        </p>
+      </div>
+
+      <form onsubmit="event.preventDefault(); showSentState();">
+        <div class="form-group">
+          <label class="form-label">
+            <span class="lang-en">Email Address</span>
+            <span class="lang-jp">メールアドレス</span>
+          </label>
+          <input type="email" class="form-input" placeholder="sapta@email.com" required>
+        </div>
+        <button type="submit" class="btn-primary">
+          <span class="lang-en">Send Magic Link →</span>
+          <span class="lang-jp">ログインリンクを送信 →</span>
+        </button>
+      </form>
+      
+      <div class="resend-hint">
+        <span class="lang-en">By logging in, you agree to our <a href="#">Terms</a>.</span>
+        <span class="lang-jp">ログインすることで、<a href="#">利用規約</a>に同意したことになります。</span>
+      </div>
+    </div>
+
+    <!-- STATE 2: CHECK INBOX -->
+    <div class="login-card" id="state-sent">
+      <div class="success-icon">✉️</div>
+      <div class="login-header">
+        <h1>
+          <span class="lang-en">Check your inbox</span>
+          <span class="lang-jp">メールを確認してください</span>
+        </h1>
+        <p>
+          <span class="lang-en">We've sent a magic login link to your email address.</span>
+          <span class="lang-jp">入力されたアドレスにログイン用リンクを送信しました。</span>
+        </p>
+      </div>
+
+      <div style="background: var(--teal-light); padding: 16px; border-radius: var(--radius); color: var(--teal-dark); font-size: 13px; font-weight: 500; margin-bottom: 24px;">
+        <span class="lang-en">Tap the link in your email to sign in instantly.</span>
+        <span class="lang-jp">メール内のリンクをタップすると、すぐにログインできます。</span>
+      </div>
+
+      <button class="btn-primary" style="background: var(--gray-100); color: var(--gray-700);" onclick="location.reload()">
+        <span class="lang-en">← Back to Login</span>
+        <span class="lang-jp">← ログインに戻る</span>
+      </button>
+
+      <div class="resend-hint">
+        <span class="lang-en">Didn't receive it? <a href="#" onclick="alert('Magic link re-sent!')">Resend Link</a></span>
+        <span class="lang-jp">届かない場合は、 <a href="#" onclick="alert('ログインリンクを再送信しました！')">こちらから再送信</a></span>
+      </div>
+    </div>
+  </div>
+
+  <button class="anno-toggle" onclick="document.getElementById('annoPanel').classList.toggle('open')">
+    🔧 <span class="lang-en">Engineer Notes</span><span class="lang-jp">開発者ノート</span>
+  </button>
+
+  <div class="anno-panel" id="annoPanel">
+    <div class="anno-header">
+      <h3>🔧 Login Implementation Notes</h3>
+      <p>Passwordless Auth Strategy</p>
+    </div>
+
+    <div class="anno-section">
+      <div class="anno-title">Technical Flow</div>
+      <div class="anno-item">
+        <strong>1. Client Request:</strong><br>
+        Call Supabase Auth: <code class="anno-code">supabase.auth.signInWithOtp()</code>
+      </div>
+      <div class="anno-item">
+        <strong>2. Redirect Configuration:</strong><br>
+        Must set <code class="anno-code">emailRedirectTo</code> to <code class="anno-code">/portal</code> or <code class="anno-code">/portal/dashboard</code>.
+      </div>
+      <div class="anno-item">
+        <strong>3. Resend Integration:</strong><br>
+        Supabase SMTP settings must point to Resend API to ensure delivery to JP carriers.
+      </div>
+    </div>
+
+    <div class="anno-section">
+      <div class="anno-title">Bilingual Email Templates</div>
+      <div class="anno-item">
+        Ensure the magic link email itself is bilingual or matches the user's browser language detected at the time of sending.
+      </div>
+    </div>
+
+    <div class="anno-section">
+      <div class="anno-title">User Experience</div>
+      <div class="anno-item">
+        <strong>Mobile Hand-off:</strong> The link must ideally open the app internally if PWA is installed, or handle the cross-app transition cleanly.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setLang(lang) {
+      document.body.setAttribute('data-lang', lang);
+      document.getElementById('lang-btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('lang-btn-jp').classList.toggle('active', lang === 'jp');
+    }
+
+    function showSentState() {
+      document.getElementById('state-input').style.display = 'none';
+      document.getElementById('state-sent').style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>

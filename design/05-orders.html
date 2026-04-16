@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TokyoCleaner Portal — Order History (Design Mockup)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       DESIGN TOKENS (Shared with Dashboard)
+    ============================================================ */
+    :root {
+      --teal:        #0EA5A0;
+      --teal-dark:   #0B8A86;
+      --teal-light:  #E6F8F7;
+      --navy:        #0F1F3D;
+      --navy-mid:    #1A3461;
+      --gray-50:     #F9FAFB;
+      --gray-100:    #F3F4F6;
+      --gray-200:    #E5E7EB;
+      --gray-400:    #9CA3AF;
+      --gray-500:    #6B7280;
+      --gray-600:    #4B5563;
+      --gray-700:    #374151;
+      --gray-800:    #1F2937;
+      --gray-900:    #111827;
+      --white:       #FFFFFF;
+      --font:        'Inter', 'Noto Sans JP', -apple-system, sans-serif;
+      --radius:      8px;
+      --radius-lg:   12px;
+      --shadow-sm:   0 1px 2px rgba(0,0,0,0.05);
+      --transition:  150ms ease;
+
+      /* Status Colors */
+      --status-scheduled-bg: #FFF7ED;
+      --status-scheduled-text:#C2410C;
+      --status-confirmed-bg: #EFF6FF;
+      --status-confirmed-text:#1D4ED8;
+      --status-in_progress-bg:#F5F3FF;
+      --status-in_progress-text:#6D28D9;
+      --status-completed-bg: #ECFDF5;
+      --status-completed-text:#059669;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      color: var(--gray-800);
+      background: var(--gray-50);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    body[data-lang="en"] .lang-jp { display: none !important; }
+    body[data-lang="jp"] .lang-en { display: none !important; }
+
+    /* ============================================================
+       SIDEBAR (Simplified)
+    ============================================================ */
+    .sidebar {
+      width: 260px;
+      background: var(--white);
+      border-right: 1px solid var(--gray-200);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+    }
+    .sidebar-logo { padding: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--gray-100); }
+    .sidebar-logo-icon { width: 32px; height: 32px; background: var(--teal); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .sidebar-logo-text { font-size: 15px; font-weight: 700; }
+    .sidebar-nav { list-style: none; padding: 4px 10px; flex: 1; }
+    .sidebar-nav li a { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius); color: var(--gray-600); text-decoration: none; font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+    .sidebar-nav li a:hover { background: var(--gray-50); }
+    .sidebar-nav li a.active { background: var(--teal-light); color: var(--teal-dark); font-weight: 600; }
+    .sidebar-label { font-size: 10px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 1.2px; padding: 20px 20px 8px; }
+    .sidebar-nav li a .nav-icon { width: 20px; text-align: center; font-size: 15px; flex-shrink: 0; }
+    .sidebar-nav li a .nav-badge { margin-left: auto; background: var(--teal); color: white; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 100px; }
+
+    /* ============================================================
+       MAIN CONTENT
+    ============================================================ */
+    .main-content {
+      flex: 1; margin-left: 260px;
+      display: flex; flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header.top-bar {
+      height: 64px; background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; position: sticky; top: 0; z-index: 90;
+    }
+
+    .page-title { font-size: 16px; font-weight: 700; color: var(--gray-900); }
+
+    .content-area { padding: 32px; max-width: 900px; width: 100%; margin: 0 auto; }
+
+    /* GROUP TITLES */
+    .section-title {
+      font-size: 12px; font-weight: 700; color: var(--gray-400);
+      text-transform: uppercase; letter-spacing: 1.2px;
+      margin: 32px 0 16px; display: flex; align-items: center; gap: 12px;
+    }
+    .section-title::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+    .section-title:first-of-type { margin-top: 0; }
+
+    /* ORDER CARDS */
+    .order-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .order-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      align-items: center;
+      gap: 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: all var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .order-card:hover {
+      border-color: var(--teal);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .order-date { text-align: center; }
+    .date-month { font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--gray-400); display: block; }
+    .date-day { font-size: 24px; font-weight: 800; color: var(--navy); display: block; line-height: 1; }
+    .date-dow { font-size: 11px; color: var(--gray-500); }
+
+    .order-info h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .order-meta { display: flex; gap: 16px; font-size: 13px; color: var(--gray-500); }
+    .meta-item { display: flex; align-items: center; gap: 6px; }
+
+    .status-badge {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; padding: 4px 10px; border-radius: 100px;
+      white-space: nowrap;
+    }
+    .status-scheduled { background: var(--status-scheduled-bg); color: var(--status-scheduled-text); }
+    .status-confirmed { background: var(--status-confirmed-bg); color: var(--status-confirmed-text); }
+    .status-in-progress { background: var(--status-in_progress-bg); color: var(--status-in_progress-text); }
+    .status-completed { background: var(--status-completed-bg); color: var(--status-completed-text); }
+
+    .order-actions { font-size: 20px; color: var(--gray-300); padding-left: 20px; border-left: 1px solid var(--gray-100); }
+
+    /* PHOTO INDICATOR */
+    .photo-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--teal);
+      background: var(--teal-light);
+      padding: 2px 8px;
+      border-radius: 100px;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+
+    .lang-toggle { background: var(--gray-100); border-radius: 100px; display: flex; padding: 3px; }
+    .lang-toggle button { padding: 4px 12px; border: none; background: none; font-size: 11px; font-weight: 700; cursor: pointer; border-radius: 100px; color: var(--gray-400); }
+    .lang-toggle button.active { background: var(--navy); color: var(--white); }
+
+    /* ANNOTATION PANEL */
+    .anno-toggle {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--navy); color: white; border: none; padding: 10px 18px; border-radius: 100px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 8px; z-index: 1000;
+    }
+    .anno-panel {
+      position: fixed; top: 0; right: -400px; bottom: 0; width: 400px;
+      background: var(--white); box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+      z-index: 1001; padding: 32px; overflow-y: auto;
+      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .anno-panel.open { right: 0; }
+    .anno-header { border-bottom: 2px solid var(--gray-100); padding-bottom: 16px; margin-bottom: 24px; }
+    .anno-section { margin-bottom: 32px; }
+    .anno-title { font-size: 12px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+    .anno-item { background: var(--gray-50); border-radius: 8px; padding: 12px; margin-bottom: 12px; font-size: 12px; }
+    .anno-code { font-family: monospace; background: var(--gray-200); padding: 2px 4px; border-radius: 4px; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main-content { margin-left: 0; }
+      .order-card { grid-template-columns: 60px 1fr; }
+      .order-actions { display: none; }
+      .order-meta { flex-direction: column; gap: 4px; }
+    }
+  </style>
+</head>
+<body data-lang="en">
+
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">🧹</div>
+      <div class="sidebar-logo-text">Tokyo<span>Cleaner</span></div>
+    </div>
+
+    <div class="sidebar-label">
+      <span class="lang-en">Portal</span>
+      <span class="lang-jp">ポータル</span>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="02-dashboard.html">
+        <span class="nav-icon">🏠</span>
+        <span class="lang-en">Dashboard</span>
+        <span class="lang-jp">ダッシュボード</span>
+      </a></li>
+      <li><a href="05-orders.html" class="active">
+        <span class="nav-icon">📋</span>
+        <span class="lang-en">My Orders</span>
+        <span class="lang-jp">注文履歴</span>
+        <span class="nav-badge">12</span>
+      </a></li>
+      <li><a href="04-property-form.html">
+        <span class="nav-icon">🏢</span>
+        <span class="lang-en">My Property</span>
+        <span class="lang-jp">物件情報</span>
+      </a></li>
+      <li><a href="#">
+        <span class="nav-icon">🔄</span>
+        <span class="lang-en">Schedule</span>
+        <span class="lang-jp">スケジュール</span>
+      </a></li>
+    </ul>
+
+    <div class="sidebar-label">
+      <span class="lang-en">Account</span>
+      <span class="lang-jp">アカウント</span>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="#">
+        <span class="nav-icon">⚙️</span>
+        <span class="lang-en">Settings</span>
+        <span class="lang-jp">設定</span>
+      </a></li>
+      <li><a href="#">
+        <span class="nav-icon">❓</span>
+        <span class="lang-en">Help</span>
+        <span class="lang-jp">ヘルプ</span>
+      </a></li>
+    </ul>
+  </nav>
+
+  <div class="main-content">
+    <header class="top-bar">
+      <div class="page-title">
+        <span class="lang-en">Order History</span>
+        <span class="lang-jp">注文履歴</span>
+      </div>
+      <div class="lang-toggle">
+        <button id="lang-btn-en" class="active" onclick="setLang('en')">EN</button>
+        <button id="lang-btn-jp" onclick="setLang('jp')">JP</button>
+      </div>
+    </header>
+
+    <main class="content-area">
+      
+      <!-- UPCOMING -->
+      <h2 class="section-title">
+        <span class="lang-en">Upcoming Cleanings</span>
+        <span class="lang-jp">今後の清掃予定</span>
+      </h2>
+      <div class="order-list">
+        
+        <!-- CARD: Scheduled -->
+        <a href="#" class="order-card" onclick="alert('→ Redirecting to Order Detail (Screen 06)')">
+          <div class="order-date">
+            <span class="date-month">
+              <span class="lang-en">Apr</span><span class="lang-jp">4月</span>
+            </span>
+            <span class="date-day">16</span>
+            <span class="date-dow">
+              <span class="lang-en">Thu</span><span class="lang-jp">木</span>
+            </span>
+          </div>
+          <div class="order-info">
+            <span class="status-badge status-scheduled">
+              <span class="lang-en">Scheduled</span><span class="lang-jp">予約済み</span>
+            </span>
+            <h3>Deep House Cleaning</h3>
+            <div class="order-meta">
+              <span class="meta-item">🕒 09:00 - 12:00</span>
+              <span class="meta-item">👤 TBD</span>
+            </div>
+          </div>
+          <div class="order-actions">›</div>
+        </a>
+
+        <!-- CARD: Confirmed -->
+        <a href="#" class="order-card" onclick="alert('→ Redirecting to Order Detail (Screen 06)')">
+          <div class="order-date">
+            <span class="date-month">
+              <span class="lang-en">Apr</span><span class="lang-jp">4月</span>
+            </span>
+            <span class="date-day">23</span>
+            <span class="date-dow">
+              <span class="lang-en">Thu</span><span class="lang-jp">木</span>
+            </span>
+          </div>
+          <div class="order-info">
+            <span class="status-badge status-confirmed">
+              <span class="lang-en">Confirmed</span><span class="lang-jp">確定</span>
+            </span>
+            <h3>Regular Cleaning</h3>
+            <div class="order-meta">
+              <span class="meta-item">🕒 09:00 - 11:30</span>
+              <span class="meta-item">👤 Tanaka S.</span>
+            </div>
+          </div>
+          <div class="order-actions">›</div>
+        </a>
+      </div>
+
+      <!-- PAST -->
+      <h2 class="section-title">
+        <span class="lang-en">Past Cleanings</span>
+        <span class="lang-jp">過去の清掃履歴</span>
+      </h2>
+      <div class="order-list">
+        
+        <!-- CARD: Completed w/ Photos -->
+        <a href="#" class="order-card" onclick="alert('→ Redirecting to Order Detail (Screen 06)')">
+          <div class="order-date">
+            <span class="date-month">
+              <span class="lang-en">Apr</span><span class="lang-jp">4月</span>
+            </span>
+            <span class="date-day">09</span>
+            <span class="date-dow">
+              <span class="lang-en">Thu</span><span class="lang-jp">木</span>
+            </span>
+          </div>
+          <div class="order-info">
+            <span class="status-badge status-completed">
+              <span class="lang-en">Completed</span><span class="lang-jp">完了</span>
+            </span>
+            <span class="photo-indicator">📷 <span class="lang-en">Photos</span><span class="lang-jp">写真あり</span></span>
+            <h3>Regular Cleaning</h3>
+            <div class="order-meta">
+              <span class="meta-item">🕒 09:00 - 11:30</span>
+              <span class="meta-item">👤 Tanaka S.</span>
+            </div>
+          </div>
+          <div class="order-actions">›</div>
+        </a>
+
+        <!-- CARD: Completed -->
+        <a href="#" class="order-card" onclick="alert('→ Redirecting to Order Detail (Screen 06)')">
+          <div class="order-date">
+            <span class="date-month">
+              <span class="lang-en">Apr</span><span class="lang-jp">4月</span>
+            </span>
+            <span class="date-day">02</span>
+            <span class="date-dow">
+              <span class="lang-en">Thu</span><span class="lang-jp">木</span>
+            </span>
+          </div>
+          <div class="order-info">
+            <span class="status-badge status-completed">
+              <span class="lang-en">Completed</span><span class="lang-jp">完了</span>
+            </span>
+            <h3>Regular Cleaning</h3>
+            <div class="order-meta">
+              <span class="meta-item">🕒 09:00 - 11:30</span>
+              <span class="meta-item">👤 Tanaka S.</span>
+            </div>
+          </div>
+          <div class="order-actions">›</div>
+        </a>
+      </div>
+
+    </main>
+  </div>
+
+  <button class="anno-toggle" onclick="document.getElementById('annoPanel').classList.toggle('open')">
+    🔧 <span class="lang-en">Engineer Notes</span><span class="lang-jp">開発者ノート</span>
+  </button>
+
+  <div class="anno-panel" id="annoPanel">
+    <div class="anno-header">
+      <h3>🔧 Order Schema & Statuses</h3>
+      <p>Data Model for the View Layer</p>
+    </div>
+
+    <div class="anno-section">
+      <div class="anno-title">Order Status Enum</div>
+      <div class="anno-item">
+        <code class="anno-code">scheduled</code>: New booking from Zapier.<br>
+        <code class="anno-code">confirmed</code>: Cleaner assigned in AppSheet.<br>
+        <code class="anno-code">in_progress</code>: Cleaner is on-site.<br>
+        <code class="anno-code">completed</code>: Finished + Photos uploaded.
+      </div>
+    </div>
+
+    <div class="anno-section">
+      <div class="anno-title">Query Logic</div>
+      <div class="anno-item">
+        <strong>Upcoming:</strong> <code class="anno-code">WHERE date >= today AND status != 'completed'</code>
+      </div>
+      <div class="anno-item">
+        <strong>Past:</strong> <code class="anno-code">WHERE date < today OR status = 'completed'</code>
+      </div>
+    </div>
+
+    <div class="anno-section">
+      <div class="anno-title">Photo Sync</div>
+      <div class="anno-item">
+        The "Photo Indicator" icon should only show if the <code class="anno-code">photos</code> array in the <code class="anno-code">orders</code> table is not empty.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setLang(lang) {
+      document.body.setAttribute('data-lang', lang);
+      document.getElementById('lang-btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('lang-btn-jp').classList.toggle('active', lang === 'jp');
+    }
+  </script>
+
+</body>
+</html>

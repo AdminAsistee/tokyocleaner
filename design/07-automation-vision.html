@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TokyoCleaner — Automation Vision & Strategy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --teal:        #0EA5A0;
+      --teal-dark:   #0B8A86;
+      --navy:        #0F1F3D;
+      --navy-light:  #1A3461;
+      --gray-50:     #F9FAFB;
+      --gray-100:    #F3F4F6;
+      --gray-200:    #E5E7EB;
+      --gray-600:    #4B5563;
+      --gray-900:    #111827;
+      --white:       #FFFFFF;
+      --font:        'Inter', 'Noto Sans JP', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background-color: var(--gray-50);
+      color: var(--gray-900);
+      line-height: 1.6;
+      padding-top: 80px;
+    }
+
+    /* Print Header */
+    .header {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 70px; background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; z-index: 1000;
+    }
+
+    .logo { font-weight: 800; font-size: 18px; color: var(--navy); }
+    .logo span { color: var(--teal); }
+
+    .btn-pdf {
+      background: var(--navy); color: white;
+      border: none; padding: 10px 20px; border-radius: 8px;
+      font-weight: 600; font-size: 13px; cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+      transition: background 150ms ease;
+    }
+    .btn-pdf:hover { background: var(--teal); }
+
+    /* Content Area */
+    .container {
+      max-width: 850px; margin: 40px auto;
+      background: var(--white); border: 1px solid var(--gray-200);
+      padding: 60px 80px; border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+    }
+
+    h1 { font-size: 36px; font-weight: 800; color: var(--navy); margin-bottom: 8px; line-height: 1.1; }
+    h2 { font-size: 20px; font-weight: 400; color: var(--gray-600); margin-bottom: 40px; }
+    
+    .alert {
+      background: #E6F8F7; border-left: 4px solid var(--teal);
+      padding: 24px; border-radius: 4px; margin-bottom: 40px;
+    }
+    .alert strong { color: var(--teal-dark); font-weight: 700; display: block; margin-bottom: 4px; }
+    .alert p { font-size: 15px; color: var(--navy); }
+
+    hr { border: none; border-top: 1px solid var(--gray-100); margin: 40px 0; }
+
+    section { margin-bottom: 48px; }
+    h3 { font-size: 20px; font-weight: 800; color: var(--navy); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+    h3 .num { color: var(--teal); font-size: 16px; opacity: 0.5; }
+    
+    h4 { font-size: 16px; font-weight: 700; color: var(--teal-dark); margin: 24px 0 12px; }
+
+    p { margin-bottom: 16px; color: var(--gray-900); }
+    
+    ul { list-style: none; margin-bottom: 24px; }
+    li { position: relative; padding-left: 24px; margin-bottom: 12px; }
+    li::before { content: '→'; position: absolute; left: 0; color: var(--teal); font-weight: 800; }
+    li strong { color: var(--navy); }
+
+    /* Table */
+    .table-wrapper { overflow-x: auto; margin: 32px 0; border: 1px solid var(--gray-200); border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+    th { background: var(--gray-50); color: var(--gray-600); font-weight: 700; padding: 12px 16px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--gray-200); }
+    td { padding: 16px; border-bottom: 1px solid var(--gray-100); }
+    tr:last-child td { border-bottom: none; }
+
+    .conclusion { background: var(--navy); color: white; padding: 40px; border-radius: 8px; margin-top: 60px; text-align: center; }
+    .conclusion p { font-size: 18px; font-weight: 600; margin: 0; }
+
+    @media print {
+      .header, .btn-pdf { display: none !important; }
+      body { padding-top: 0; background: white; }
+      .container { border: none; box-shadow: none; margin: 0; padding: 0; width: 100%; max-width: 100%; }
+      h1 { font-size: 28px; }
+      .alert { break-inside: avoid; }
+      section { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="logo">Tokyo<span>Cleaner</span></div>
+    <button class="btn-pdf" onclick="window.print()">
+      📄 Download Vision as PDF
+    </button>
+  </header>
+
+  <main class="container">
+    <h1>TokyoCleaner: The Automation Vision</h1>
+    <h2>From Manual Selection to Algorithmic Scheduling</h2>
+
+    <div class="alert">
+      <strong>IMPORTANT: Context</strong>
+      <p>The scheduler staff has resigned. This document defines how we replace that role with a software-driven "Recommendation & Assignment Engine" to scale historical volume (6,400 orders/year) without increasing head-count.</p>
+    </div>
+
+    <hr>
+
+    <section>
+      <h3><span class="num">01.</span> Current "Mental Landscape"</h3>
+      <p>Complexity currently lives in the scheduler's head. The departure creates architectural risks:</p>
+      <ul>
+        <li><strong>The Information Silo:</strong> Knowledge is limited to service periods. Transition risks are high if orders aren't "well-organized" during handover.</li>
+        <li><strong>The Interruption Cycle:</strong> Phone/Chat adjustments (sick leave) disrupt primary workflow.</li>
+        <li><strong>The Compliance Gap:</strong> Quality is currently binary: 0 complaints = Good; >0 = Bad.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3><span class="num">02.</span> Structural Requirements</h3>
+      
+      <h4>A. Availability as an Entity</h4>
+      <p>Moving from "checking calendars" to "querying data":</p>
+      <ul>
+        <li><strong>Recurring Patterns:</strong> Staff define baseline active windows.</li>
+        <li><strong>Override Layer:</strong> Centralized sick leave requests submitted via app, instantly disqualifying availability without a manual phone call.</li>
+      </ul>
+
+      <h4>B. The Performance Record</h4>
+      <p>Using historical data to replace human intuition:</p>
+      <ul>
+        <li><strong>Property Familiarity:</strong> Tracking repeat visits per property.</li>
+        <li><strong>Complaint-Free Streak:</strong> Using binary complaint data as the primary quality filter.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3><span class="num">03.</span> The Scheduler Replacement Workflow</h3>
+
+      <h4>Step 1: Automated Rules</h4>
+      <p>Instant SQL filtering for <strong>availability, pattern-fit, and active overrides.</strong></p>
+
+      <h4>Step 2: Algorithmic Ranking</h4>
+      <p>Sorting candidates by <strong>Zone Priority (ML), Familiarity, and Workload Balance.</strong></p>
+
+      <h4>Step 3: One-Click Confirmation (Per-Order Workflow)</h4>
+      <p>When you open an individual <strong>Booking Detail</strong> and click <strong>"Assign Staff"</strong>, the system generates a unique recommended set. One click notifies staff and updates the customer portal.</p>
+    </section>
+
+    <section>
+      <h3><span class="num">04.</span> Strategic ROI</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Manual (Scheduler)</th>
+              <th>Automated (SaaS)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Assignment Speed</strong></td>
+              <td>10–20 mins / booking</td>
+              <td>&lt; 1 second</td>
+            </tr>
+            <tr>
+              <td><strong>Adjustments</strong></td>
+              <td>Disruptive Phone/Chat</td>
+              <td>Seamless App Notification</td>
+            </tr>
+            <tr>
+              <td><strong>Transport Costs</strong></td>
+              <td>Random / Sub-optimal</td>
+              <td>Geographic Optimization</td>
+            </tr>
+            <tr>
+              <td><strong>Scalability</strong></td>
+              <td>Limited by Headcount</td>
+              <td>Unlimited (6,400+ orders)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="conclusion">
+      <p>We aren't just building a portal; we are building the "Brain" that manages the labor.</p>
+    </div>
+
+  </main>
+
+</body>
+</html>

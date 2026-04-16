@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TokyoCleaner Portal — Property Registry (Design Mockup)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       DESIGN TOKENS (Standard Teal Theme)
+    ============================================================ */
+    :root {
+      --teal:        #0EA5A0;
+      --teal-dark:   #0B8A86;
+      --teal-light:  #E6F8F7;
+      --navy:        #0F1F3D;
+      --navy-mid:    #1A3461;
+      --gray-25:     #FCFCFD;
+      --gray-50:     #F9FAFB;
+      --gray-100:    #F3F4F6;
+      --gray-200:    #E5E7EB;
+      --gray-300:    #D1D5DB;
+      --gray-400:    #9CA3AF;
+      --gray-500:    #6B7280;
+      --gray-600:    #4B5563;
+      --gray-700:    #374151;
+      --gray-800:    #1F2937;
+      --gray-900:    #111827;
+      --white:       #FFFFFF;
+      --font:        'Inter', 'Noto Sans JP', -apple-system, sans-serif;
+      --radius:      8px;
+      --radius-lg:   12px;
+      --shadow-sm:   0 1px 2px rgba(0,0,0,0.05);
+      --transition:  150ms ease;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      color: var(--gray-800);
+      background: var(--gray-50);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body[data-lang="en"] .lang-jp { display: none !important; }
+    body[data-lang="jp"] .lang-en { display: none !important; }
+
+    /* ============================================================
+       HEADER
+    ============================================================ */
+    .top-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .back-btn {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gray-600);
+      text-decoration: none;
+      font-size: 18px;
+      transition: background var(--transition);
+      margin-right: 12px;
+    }
+
+    .back-btn:hover { background: var(--gray-100); }
+
+    .page-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gray-900);
+      flex: 1;
+    }
+
+    .progress-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal);
+      background: var(--teal-light);
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+
+    .lang-toggle {
+      background: var(--gray-100);
+      border-radius: 100px;
+      display: flex;
+      padding: 3px;
+      margin-left: 16px;
+    }
+
+    .lang-toggle button {
+      padding: 4px 10px;
+      border: none;
+      background: none;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 100px;
+      color: var(--gray-400);
+    }
+
+    .lang-toggle button.active {
+      background: var(--navy);
+      color: var(--white);
+    }
+
+    /* ============================================================
+       FORM CONTENT
+    ============================================================ */
+    .form-container {
+      max-width: 600px;
+      margin: 24px auto 100px; /* Spacer for sticky footer */
+      padding: 0 20px;
+      width: 100%;
+    }
+
+    .form-section {
+      background: var(--white);
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-200);
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .section-icon {
+      font-size: 18px;
+      color: var(--teal);
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    /* FIELD LAYOUTS */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group:last-child { margin-bottom: 0; }
+
+    .label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--gray-900);
+      transition: all var(--transition);
+      outline: none;
+    }
+
+    .input:focus { border-color: var(--teal); }
+    .input::placeholder { color: var(--gray-400); }
+
+    .textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .helper-text {
+      font-size: 11px;
+      color: var(--gray-500);
+      margin-top: 6px;
+    }
+
+    /* RADIO TILES */
+    .radio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .radio-tile {
+      cursor: pointer;
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 12px;
+      text-align: center;
+      transition: all var(--transition);
+    }
+
+    .radio-tile:hover { background: var(--gray-25); }
+    
+    .radio-tile.active {
+      background: var(--teal-light);
+      border-color: var(--teal);
+      color: var(--teal-dark);
+      font-weight: 600;
+    }
+
+    /* PHOTO UPLOADS */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .photo-upload-box {
+      aspect-ratio: 1;
+      border: 2px dashed var(--gray-200);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      color: var(--gray-400);
+      transition: all var(--transition);
+    }
+
+    .photo-upload-box:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+      background: var(--teal-light);
+    }
+
+    .photo-upload-box span { font-size: 10px; font-weight: 700; text-transform: uppercase; }
+
+    /* STICKY FOOTER */
+    .sticky-footer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--white);
+      border-top: 1px solid var(--gray-200);
+      padding: 16px 24px;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      width: 100%;
+      max-width: 560px;
+      padding: 14px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .btn-primary:hover { background: var(--teal-dark); }
+
+    /* ANNOTATION PANEL */
+    .anno-toggle {
+      position: fixed;
+      bottom: 90px; right: 24px; /* Above primary bar */
+      background: var(--navy);
+      color: white; border: none; padding: 10px 18px; border-radius: 100px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 8px; z-index: 1000;
+    }
+    .anno-panel {
+      position: fixed; top: 0; right: -400px; bottom: 0; width: 400px;
+      background: var(--white); box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+      z-index: 1001; padding: 32px; overflow-y: auto;
+      transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .anno-panel.open { right: 0; }
+    .anno-header { border-bottom: 2px solid var(--gray-100); padding-bottom: 16px; margin-bottom: 24px; }
+    .anno-section { margin-bottom: 32px; }
+    .anno-title { font-size: 12px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+    .anno-item { background: var(--gray-50); border-radius: 8px; padding: 12px; margin-bottom: 12px; font-size: 12px; }
+    .anno-code { font-family: monospace; background: var(--gray-200); padding: 2px 4px; border-radius: 4px; }
+
+    @media (max-width: 600px) {
+        .input-row { grid-template-columns: 1fr; }
+        .photo-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+  </style>
+</head>
+<body data-lang="en">
+
+  <header class="top-bar">
+    <a href="03-property-consent.html" class="back-btn">←</a>
+    <div class="page-title">
+      <span class="lang-en">Register Property</span>
+      <span class="lang-jp">物件情報の登録</span>
+    </div>
+    <div class="progress-tag">Step 2 of 2</div>
+    <div class="lang-toggle">
+      <button id="lang-btn-en" class="active" onclick="setLang('en')">EN</button>
+      <button id="lang-btn-jp" onclick="setLang('jp')">JP</button>
+    </div>
+  </header>
+
+  <main class="form-container">
+    
+    <!-- SECTION 1: LOCATION -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-icon">📍</span>
+        <span class="section-title">
+          <span class="lang-en">Property Location</span>
+          <span class="lang-jp">物件の所在地</span>
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label class="label">
+          <span class="lang-en">Full Address</span>
+          <span class="lang-jp">住所</span>
+        </label>
+        <input type="text" class="input" placeholder="東京都渋谷区神南1-2-3" required>
+        <div class="helper-text">
+          <span class="lang-en">Format: Prefecture, City, Street Address</span>
+          <span class="lang-jp">都道府県、市区町村、番地を入力してください</span>
+        </div>
+      </div>
+
+      <div class="input-row">
+        <div class="form-group">
+          <label class="label">
+            <span class="lang-en">Building Name</span>
+            <span class="lang-jp">建物名</span>
+          </label>
+          <input type="text" class="input" placeholder="シブヤビル">
+        </div>
+        <div class="form-group">
+          <label class="label">
+            <span class="lang-en">Room / Floor</span>
+            <span class="lang-jp">部屋番号 / 階数</span>
+          </label>
+          <input type="text" class="input" placeholder="802" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="label">
+          <span class="lang-en">Google Maps URL (Optional)</span>
+          <span class="lang-jp">Google マップのURL (任意)</span>
+        </label>
+        <input type="url" class="input" placeholder="https://goo.gl/maps/...">
+      </div>
+    </section>
+
+    <!-- SECTION 2: ACCESS -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-icon">🔑</span>
+        <span class="section-title">
+          <span class="lang-en">Access Instructions</span>
+          <span class="lang-jp">入室方法</span>
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label class="label">
+          <span class="lang-en">Gate / Intercom / Keybox Codes</span>
+          <span class="lang-jp">オートロック / インターホン / キーボックスの番号</span>
+        </label>
+        <input type="text" class="input" placeholder="Gate: 1234, Keybox inside mailbox" required>
+        <div class="helper-text">
+          <span class="lang-en">Enter any codes or secrets our cleaners need to enter your property.</span>
+          <span class="lang-jp">スタッフが入室するために必要な暗証番号などを入力してください。</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="label">
+          <span class="lang-en">Detailed Entrance Instructions</span>
+          <span class="lang-jp">入室に関する詳細な説明</span>
+        </label>
+        <textarea class="input textarea" placeholder="Go to 2F entrance, use the code above on the keypad."></textarea>
+      </div>
+    </section>
+
+    <!-- SECTION 3: EQUIPMENT -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-icon">🧹</span>
+        <span class="section-title">
+          <span class="lang-en">Equipment</span>
+          <span class="lang-jp">掃除用具</span>
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label class="label">
+          <span class="lang-en">Does the property have a vacuum cleaner?</span>
+          <span class="lang-jp">物件に掃除機はありますか？</span>
+        </label>
+        <div class="radio-grid">
+          <div class="radio-tile active" id="v-yes" onclick="setVacuum(true)">
+            <span class="lang-en">Yes, available</span>
+            <span class="lang-jp">はい、あります</span>
+          </div>
+          <div class="radio-tile" id="v-no" onclick="setVacuum(false)">
+            <span class="lang-en">No vacuum</span>
+            <span class="lang-jp">いいえ、ありません</span>
+          </div>
+        </div>
+        <div class="helper-text">
+          <span class="lang-en">If no vacuum is available, we will bring a handheld unit.</span>
+          <span class="lang-jp">掃除機がない場合は、ハンディタイプを持参します。</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: PHOTOS -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-icon">📷</span>
+        <span class="section-title">
+          <span class="lang-en">Property Photos</span>
+          <span class="lang-jp">物件の写真</span>
+        </span>
+      </div>
+      
+      <p style="font-size: 13px; color: var(--gray-500); margin-bottom: 16px;">
+        <span class="lang-en">Uploading photos of the entrance or keybox helps our cleaners find your property faster.</span>
+        <span class="lang-jp">入り口やキーボックスの写真をアップロードすると、入室がスムーズになります。</span>
+      </p>
+
+      <div class="photo-grid">
+        <div class="photo-upload-box">
+          <span style="font-size: 20px;">🚪</span>
+          <span>Entrance</span>
+        </div>
+        <div class="photo-upload-box">
+          <span style="font-size: 20px;">📦</span>
+          <span>Keybox</span>
+        </div>
+        <div class="photo-upload-box">
+          <span style="font-size: 20px;">➕</span>
+          <span>Other</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: ADDITIONAL NOTES -->
+    <section class="form-section">
+      <div class="section-header">
+        <span class="section-icon">📝</span>
+        <span class="section-title">
+          <span class="lang-en">Additional Notes</span>
+          <span class="lang-jp">その他備考</span>
+        </span>
+      </div>
+      <textarea class="input textarea" placeholder="Any other specific instructions for our team?"></textarea>
+    </section>
+
+  </main>
+
+  <footer class="sticky-footer">
+    <button class="btn-primary" onclick="alert('→ Saving to properties table...\n→ Redirecting back to Dashboard.')">
+      <span class="lang-en">Save Property Details</span>
+      <span class="lang-jp">物件情報を保存する</span>
+    </button>
+  </footer>
+
+  <button class="anno-toggle" onclick="document.getElementById('annoPanel').classList.toggle('open')">
+    🔧 <span class="lang-en">Engineer Notes</span><span class="lang-jp">開発者ノート</span>
+  </button>
+
+  <div class="anno-panel" id="annoPanel">
+    <div class="anno-header">
+      <h3>🔧 Property Registry Specs</h3>
+      <p>Backend requirements for Phase 1</p>
+    </div>
+
+    <div class="anno-section">
+      <div class="anno-title">Mapped API Endpoint</div>
+      <div class="anno-item">
+        <span style="background:var(--teal-dark); color:white; padding:2px 6px; border-radius:4px; font-weight:700;">POST</span>
+        <code class="anno-code">/api/properties</code><br>
+        Payload includes all text fields + array of Storage IDs for photos.
+      </div>
+    </div>
+
+    <div class="anno-section">
+      <div class="anno-title">Data Mappings (Supabase)</div>
+      <div class="anno-item">
+        <code class="anno-code">address</code>: Full concatenated string.<br>
+        <code class="anno-code">has_vacuum</code>: Boolean from radio selection.<br>
+        <code class="anno-code">photos</code>: Array of paths in <code class="anno-code">property-photos/</code> bucket.
+      </div>
+    </div>
+
+    <div class="anno-section">
+      <div class="anno-title">Photo Storage Policy</div>
+      <div class="anno-item">
+        Bucket: <code class="anno-code">property-photos</code><br>
+        Naming: <code class="anno-code">{customer_id}/{timestamp}_{label}.jpg</code><br>
+        Access: Authenticated user RLS (can only see their own folder).
+      </div>
+    </div>
+
+    <div class="anno-section">
+      <div class="anno-title">UX Requirements</div>
+      <div class="anno-item">
+        <strong>Success State:</strong> After successful POST, show a global toast/success banner on the redirection target (Dashboard).
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setLang(lang) {
+      document.body.setAttribute('data-lang', lang);
+      document.getElementById('lang-btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('lang-btn-jp').classList.toggle('active', lang === 'jp');
+    }
+
+    function setVacuum(val) {
+      document.getElementById('v-yes').classList.toggle('active', val);
+      document.getElementById('v-no').classList.toggle('active', !val);
+    }
+  </script>
+
+</body>
+</html>
