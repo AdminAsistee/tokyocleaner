@@ -155,7 +155,7 @@ export default function OrderDetailClient({ booking }: { booking: Booking }) {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F9FAFB' }}>
-      <Sidebar lang={lang} onLangToggle={() => setLang(lang === 'en' ? 'jp' : 'en')} activeNav="orders" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar lang={lang} onLangToggle={() => setLang(lang === 'en' ? 'jp' : 'en')} activeNav="orders" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} role="client" />
 
       <div className="tc-main">
         {/* Top Bar */}

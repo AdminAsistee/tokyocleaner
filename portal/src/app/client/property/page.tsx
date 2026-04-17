@@ -62,7 +62,7 @@ export default function PropertyListPage() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F9FAFB', fontFamily: "'Inter', 'Noto Sans JP', sans-serif" }}>
-      <Sidebar lang={lang} onLangToggle={() => setLang(lang === 'en' ? 'jp' : 'en')} activeNav="property" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar lang={lang} onLangToggle={() => setLang(lang === 'en' ? 'jp' : 'en')} activeNav="property" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} role="client" />
 
       <div className="tc-main">
         {/* Top bar */}
@@ -108,7 +108,7 @@ export default function PropertyListPage() {
               </h1>
               <p style={{ fontSize: '13px', color: '#6B7280' }}>{t.subtitle}</p>
             </div>
-            <button onClick={() => router.push('/dashboard/property/consent')}
+            <button onClick={() => router.push('/client/property/consent')}
               style={{
                 display: 'flex', alignItems: 'center', gap: '8px',
                 padding: '10px 20px', borderRadius: '8px',
@@ -154,7 +154,7 @@ export default function PropertyListPage() {
               <p style={{ fontSize: '14px', color: '#6B7280', marginBottom: '24px', maxWidth: '360px', margin: '0 auto 24px' }}>
                 {t.noPropertiesDesc}
               </p>
-              <button onClick={() => router.push('/dashboard/property/consent')}
+              <button onClick={() => router.push('/client/property/consent')}
                 style={{
                   padding: '12px 28px', borderRadius: '8px',
                   background: '#0EA5A0', color: 'white',

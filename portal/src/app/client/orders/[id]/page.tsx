@@ -39,7 +39,7 @@ export default async function OrderDetailPage({ params }: Props) {
     .single()
 
   if (error || !booking) {
-    redirect('/dashboard')
+    redirect('/client')
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

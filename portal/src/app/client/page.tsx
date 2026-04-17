@@ -11,6 +11,19 @@ export default async function DashboardPage() {
   const email = user.email?.toLowerCase() ?? ''
   const today = new Date().toISOString().split('T')[0]
 
+  // Fetch client record
+  const { data: clientRecord } = await supabase
+    .from('clients')
+    .select('*')
+    .eq('auth_user_id', user.id)
+    .single()
+
+  // Count properties owned by this client
+  const { count: propertyCount } = await supabase
+    .from('properties')
+    .select('id', { count: 'exact', head: true })
+    .eq('client_id', clientRecord?.id ?? -1)
+
   // 1. Next upcoming booking
   const { data: nextBooking } = await supabase
     .from('bookings')
@@ -23,7 +36,7 @@ export default async function DashboardPage() {
     .limit(1)
     .single()
 
-  // 2. Recent 3 completed bookings (for the Recent Orders card)
+  // 2. Recent bookings
   const { data: recentBookings } = await supabase
     .from('bookings')
     .select('id, scheduled_date, scheduled_time, service_type, status, notes, properties (name, address)')
@@ -31,7 +44,7 @@ export default async function DashboardPage() {
     .order('scheduled_date', { ascending: false })
     .limit(5)
 
-  // 3. Total counts for overview
+  // 3. Total counts
   const { count: totalCount } = await supabase
     .from('bookings')
     .select('id', { count: 'exact', head: true })
@@ -45,6 +58,9 @@ export default async function DashboardPage() {
     .neq('status', 'completed')
     .neq('status', 'cancelled')
 
+  // Check if password was changed (user has updated_at after created_at)
+  const hasChangedPassword = !!(user.user_metadata?.password_changed)
+
   return (
     <DashboardClient
       user={user}
@@ -52,6 +68,9 @@ export default async function DashboardPage() {
       recentBookings={(recentBookings ?? []) as any}
       totalCount={totalCount ?? 0}
       upcomingCount={upcomingCount ?? 0}
+      clientRecord={clientRecord as any}
+      propertyCount={propertyCount ?? 0}
+      hasChangedPassword={hasChangedPassword}
     />
   )
 }

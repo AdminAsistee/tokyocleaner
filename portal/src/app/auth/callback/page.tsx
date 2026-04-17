@@ -4,6 +4,15 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
+/** Map role → home path */
+function homeForRole(role?: string): string {
+  switch (role) {
+    case 'admin': return '/admin'
+    case 'staff': return '/staff'
+    default:      return '/client'
+  }
+}
+
 export default function AuthCallbackPage() {
   const router = useRouter()
   const [status, setStatus] = useState('Signing you in...')
@@ -12,10 +21,10 @@ export default function AuthCallbackPage() {
     const supabase = createClient()
     let redirected = false
 
-    const goToDashboard = () => {
+    const goHome = (role?: string) => {
       if (!redirected) {
         redirected = true
-        router.replace('/dashboard')
+        router.replace(homeForRole(role))
       }
     }
 
@@ -23,7 +32,8 @@ export default function AuthCallbackPage() {
     //    detects tokens in the URL hash (implicit flow) or sets a session
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
-        goToDashboard()
+        const role = session.user?.app_metadata?.role
+        goHome(role)
       }
     })
 
@@ -35,24 +45,37 @@ export default function AuthCallbackPage() {
       const code = params.get('code')
 
       if (token_hash && type) {
-        const { error } = await supabase.auth.verifyOtp({ token_hash, type })
-        if (!error) { goToDashboard(); return }
-        setStatus('Verification failed: ' + error.message)
-        setTimeout(() => router.replace('/login?error=' + encodeURIComponent(error.message)), 2500)
-        return
+        const { data, error } = await supabase.auth.verifyOtp({ token_hash, type })
+        if (!error && data.session) {
+          goHome(data.session.user?.app_metadata?.role)
+          return
+        }
+        if (error) {
+          setStatus('Verification failed: ' + error.message)
+          setTimeout(() => router.replace('/login?error=' + encodeURIComponent(error.message)), 2500)
+          return
+        }
       }
 
       if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code)
-        if (!error) { goToDashboard(); return }
-        setStatus('Code exchange failed: ' + error.message)
-        setTimeout(() => router.replace('/login?error=' + encodeURIComponent(error.message)), 2500)
-        return
+        const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+        if (!error && data.session) {
+          goHome(data.session.user?.app_metadata?.role)
+          return
+        }
+        if (error) {
+          setStatus('Code exchange failed: ' + error.message)
+          setTimeout(() => router.replace('/login?error=' + encodeURIComponent(error.message)), 2500)
+          return
+        }
       }
 
       // 3. Check if a session already exists (user re-visits this page logged in)
       const { data: { session } } = await supabase.auth.getSession()
-      if (session) { goToDashboard(); return }
+      if (session) {
+        goHome(session.user?.app_metadata?.role)
+        return
+      }
 
       // 4. Give the hash-based implicit flow a moment to fire onAuthStateChange
       //    If nothing happens in 6s, something went wrong

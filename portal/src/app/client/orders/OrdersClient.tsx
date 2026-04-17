@@ -248,7 +248,7 @@ export default function OrdersClient({ user, bookings }: OrdersClientProps) {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F9FAFB', fontFamily: "'Inter', 'Noto Sans JP', sans-serif" }}>
-      <Sidebar lang={lang} onLangToggle={() => setLang(lang === 'en' ? 'jp' : 'en')} activeNav="orders" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar lang={lang} onLangToggle={() => setLang(lang === 'en' ? 'jp' : 'en')} activeNav="orders" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} role="client" />
 
       <div className="tc-main">
         {/* Top bar */}
@@ -350,13 +350,13 @@ export default function OrdersClient({ user, bookings }: OrdersClientProps) {
                 <>
                   {/* Desktop table */}
                   <div className="orders-table-wrap">
-                    <OrderTable bookings={filteredBookings} lang={lang} t={t} onRowClick={(id) => router.push(`/dashboard/orders/${id}`)} />
+                    <OrderTable bookings={filteredBookings} lang={lang} t={t} onRowClick={(id) => router.push(`/client/orders/${id}`)} />
                   </div>
                   {/* Mobile cards */}
                   <div className="orders-cards-wrap">
                     {filteredBookings.map(b => (
                       <OrderCard key={b.id} booking={b} lang={lang}
-                        onClick={() => router.push(`/dashboard/orders/${b.id}`)} />
+                        onClick={() => router.push(`/client/orders/${b.id}`)} />
                     ))}
                   </div>
                 </>
@@ -384,13 +384,13 @@ export default function OrdersClient({ user, bookings }: OrdersClientProps) {
                 <div style={{ marginBottom: '32px' }}>
                   {/* Desktop table */}
                   <div className="orders-table-wrap">
-                    <OrderTable bookings={upcoming} lang={lang} t={t} onRowClick={(id) => router.push(`/dashboard/orders/${id}`)} />
+                    <OrderTable bookings={upcoming} lang={lang} t={t} onRowClick={(id) => router.push(`/client/orders/${id}`)} />
                   </div>
                   {/* Mobile cards */}
                   <div className="orders-cards-wrap">
                     {upcoming.map(b => (
                       <OrderCard key={b.id} booking={b} lang={lang}
-                        onClick={() => router.push(`/dashboard/orders/${b.id}`)} />
+                        onClick={() => router.push(`/client/orders/${b.id}`)} />
                     ))}
                   </div>
                 </div>
@@ -415,13 +415,13 @@ export default function OrdersClient({ user, bookings }: OrdersClientProps) {
                 <div>
                   {/* Desktop table */}
                   <div className="orders-table-wrap">
-                    <OrderTable bookings={past} lang={lang} t={t} onRowClick={(id) => router.push(`/dashboard/orders/${id}`)} />
+                    <OrderTable bookings={past} lang={lang} t={t} onRowClick={(id) => router.push(`/client/orders/${id}`)} />
                   </div>
                   {/* Mobile cards */}
                   <div className="orders-cards-wrap">
                     {past.map(b => (
                       <OrderCard key={b.id} booking={b} lang={lang}
-                        onClick={() => router.push(`/dashboard/orders/${b.id}`)} />
+                        onClick={() => router.push(`/client/orders/${b.id}`)} />
                     ))}
                   </div>
                 </div>

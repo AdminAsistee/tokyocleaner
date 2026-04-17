@@ -40,9 +40,9 @@ export default function PropertyConsentPage() {
 
   const handleContinue = () => {
     if (selected === 'save') {
-      router.push('/dashboard/property/register')
+      router.push('/client/property/register')
     } else {
-      router.push('/dashboard/property')
+      router.push('/client/property')
     }
   }
 
@@ -87,7 +87,7 @@ export default function PropertyConsentPage() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F9FAFB', fontFamily: "'Inter', 'Noto Sans JP', sans-serif" }}>
-      <Sidebar lang={lang} onLangToggle={() => setLang(lang === 'en' ? 'jp' : 'en')} activeNav="property" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar lang={lang} onLangToggle={() => setLang(lang === 'en' ? 'jp' : 'en')} activeNav="property" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} role="client" />
 
       <div className="tc-main">
         {/* Top bar */}
@@ -100,7 +100,7 @@ export default function PropertyConsentPage() {
             <button className="tc-hamburger" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Menu" style={{ position: 'relative' }}>
               <span className="bar" /><span className="bar" /><span className="bar" />
             </button>
-            <button onClick={() => router.push('/dashboard/property')} style={{
+            <button onClick={() => router.push('/client/property')} style={{
               display: 'flex', alignItems: 'center', gap: '8px',
               background: 'none', border: 'none', cursor: 'pointer',
               color: '#6B7280', fontWeight: 600, fontSize: '13px',

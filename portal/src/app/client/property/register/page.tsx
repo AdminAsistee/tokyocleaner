@@ -115,7 +115,7 @@ export default function PropertyRegisterPage() {
     // TODO: POST to Supabase properties table
     await new Promise(r => setTimeout(r, 1200))
     setSaving(false)
-    router.push('/dashboard')
+    router.push('/client')
   }
 
   /* Shared styles */
@@ -145,7 +145,7 @@ export default function PropertyRegisterPage() {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F9FAFB', fontFamily: "'Inter', 'Noto Sans JP', sans-serif" }}>
-      <Sidebar lang={lang} onLangToggle={() => setLang(lang === 'en' ? 'jp' : 'en')} activeNav="property" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar lang={lang} onLangToggle={() => setLang(lang === 'en' ? 'jp' : 'en')} activeNav="property" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} role="client" />
 
       <div className="tc-main">
         {/* Top bar */}

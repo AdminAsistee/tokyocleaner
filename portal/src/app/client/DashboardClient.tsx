@@ -4,9 +4,10 @@ import { useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 import Sidebar from '@/components/Sidebar'
+import { createClient } from '@/lib/supabase/client'
 import {
   ChevronRight, MapPin, Clock, User as UserIcon, Building2,
-  CalendarPlus, X, Sparkles
+  CalendarPlus, X, Sparkles, CheckCircle2, Circle, Lock, Home
 } from 'lucide-react'
 import { useLang } from '@/hooks/useLang'
 
@@ -99,6 +100,9 @@ interface DashboardClientProps {
   recentBookings: Booking[]
   totalCount: number
   upcomingCount: number
+  clientRecord: { id: number; name: string; address: string | null; building_name: string | null; room_number: string | null } | null
+  propertyCount: number
+  hasChangedPassword: boolean
 }
 
 /* ================================================================
@@ -154,18 +158,57 @@ function buildGoogleCalendarUrl() {
    COMPONENT
    ================================================================ */
 export default function DashboardClient({
-  user, nextBooking, recentBookings, totalCount, upcomingCount
+  user, nextBooking, recentBookings, totalCount, upcomingCount,
+  clientRecord, propertyCount, hasChangedPassword
 }: DashboardClientProps) {
   const [lang, setLang, toggleLang] = useLang()
   const [showOnboarding, setShowOnboarding] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [showInfoPopup, setShowInfoPopup] = useState(true)
   const router = useRouter()
   const t = i18n[lang]
-  const userName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
+  const userName = clientRecord?.name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
+
+  // Onboarding popup fields
+  const [popupName, setPopupName] = useState(clientRecord?.name || '')
+  const [popupAddress, setPopupAddress] = useState(clientRecord?.address || '')
+  const [popupBuilding, setPopupBuilding] = useState(clientRecord?.building_name || '')
+  const [popupRoom, setPopupRoom] = useState(clientRecord?.room_number || '')
+  const [popupSaving, setPopupSaving] = useState(false)
+  const [popupError, setPopupError] = useState('')
+
+  // Check if profile is incomplete (name is empty or address is empty)
+  const profileIncomplete = !clientRecord || !clientRecord.name || !clientRecord.address
+
+  // Progress bar steps
+  const infoComplete = clientRecord ? (!!clientRecord.name && !!clientRecord.address) : false
+  const passwordComplete = hasChangedPassword
+  const propertyComplete = propertyCount > 0
+  const completedSteps = [infoComplete, passwordComplete, propertyComplete].filter(Boolean).length
+  const totalSteps = 3
+
+  const handlePopupSave = async () => {
+    if (!popupName.trim()) { setPopupError(lang === 'en' ? 'Name is required' : '名前は必須です'); return }
+    if (!popupAddress.trim()) { setPopupError(lang === 'en' ? 'Address is required' : '住所は必須です'); return }
+    setPopupSaving(true); setPopupError('')
+    const supabase = createClient()
+    if (clientRecord) {
+      await supabase.from('clients').update({
+        name: popupName.trim(),
+        address: popupAddress.trim(),
+        building_name: popupBuilding.trim() || null,
+        room_number: popupRoom.trim() || null,
+      }).eq('id', clientRecord.id)
+    }
+    await supabase.auth.updateUser({ data: { full_name: popupName.trim() } })
+    setPopupSaving(false)
+    setShowInfoPopup(false)
+    router.refresh()
+  }
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#F9FAFB', fontFamily: "'Inter', 'Noto Sans JP', sans-serif" }}>
-      <Sidebar lang={lang} onLangToggle={() => setLang(lang === 'en' ? 'jp' : 'en')} activeNav="dashboard" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar lang={lang} onLangToggle={() => setLang(lang === 'en' ? 'jp' : 'en')} activeNav="dashboard" isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} role="client" />
 
       <div className="tc-main">
         {/* Top bar */}
@@ -211,6 +254,67 @@ export default function DashboardClient({
             </h1>
             <p style={{ fontSize: '13px', color: '#6B7280' }}>{t.dashboardSub}</p>
           </div>
+
+          {/* Setup Progress Bar */}
+          {completedSteps < totalSteps && (
+            <div style={{
+              background: 'white', borderRadius: '12px', border: '1px solid #E5E7EB',
+              padding: '20px 24px', marginBottom: '20px',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#111827', margin: 0 }}>
+                  {lang === 'en' ? 'Account Setup' : 'アカウント設定'} — {completedSteps}/{totalSteps}
+                </h3>
+                <span style={{ fontSize: '12px', color: '#6B7280' }}>
+                  {Math.round((completedSteps / totalSteps) * 100)}%
+                </span>
+              </div>
+              {/* Progress bar track */}
+              <div style={{ height: '6px', background: '#E5E7EB', borderRadius: '3px', marginBottom: '16px', overflow: 'hidden' }}>
+                <div style={{
+                  height: '100%', background: 'linear-gradient(90deg, #0EA5A0, #14B8A6)',
+                  borderRadius: '3px', width: `${(completedSteps / totalSteps) * 100}%`,
+                  transition: 'width 0.5s ease',
+                }} />
+              </div>
+              {/* Step items */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div onClick={() => router.push('/client/settings')} style={{
+                  display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer',
+                  padding: '8px 12px', borderRadius: '8px', background: infoComplete ? '#F0FDF4' : '#FEF3C7',
+                  border: `1px solid ${infoComplete ? '#BBF7D0' : '#FDE68A'}`,
+                }}>
+                  {infoComplete ? <CheckCircle2 size={16} color="#059669" /> : <Circle size={16} color="#D97706" />}
+                  <span style={{ fontSize: '13px', fontWeight: 500, color: infoComplete ? '#059669' : '#92400E', flex: 1 }}>
+                    {lang === 'en' ? 'Update your name & address' : '名前と住所を更新'}
+                  </span>
+                  <ChevronRight size={14} color="#9CA3AF" />
+                </div>
+                <div onClick={() => router.push('/client/settings')} style={{
+                  display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer',
+                  padding: '8px 12px', borderRadius: '8px', background: passwordComplete ? '#F0FDF4' : '#FEF3C7',
+                  border: `1px solid ${passwordComplete ? '#BBF7D0' : '#FDE68A'}`,
+                }}>
+                  {passwordComplete ? <CheckCircle2 size={16} color="#059669" /> : <Lock size={16} color="#D97706" />}
+                  <span style={{ fontSize: '13px', fontWeight: 500, color: passwordComplete ? '#059669' : '#92400E', flex: 1 }}>
+                    {lang === 'en' ? 'Change your password' : 'パスワードを変更'}
+                  </span>
+                  <ChevronRight size={14} color="#9CA3AF" />
+                </div>
+                <div onClick={() => router.push('/client/property')} style={{
+                  display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer',
+                  padding: '8px 12px', borderRadius: '8px', background: propertyComplete ? '#F0FDF4' : '#FEF3C7',
+                  border: `1px solid ${propertyComplete ? '#BBF7D0' : '#FDE68A'}`,
+                }}>
+                  {propertyComplete ? <CheckCircle2 size={16} color="#059669" /> : <Home size={16} color="#D97706" />}
+                  <span style={{ fontSize: '13px', fontWeight: 500, color: propertyComplete ? '#059669' : '#92400E', flex: 1 }}>
+                    {lang === 'en' ? 'Add your first property' : '最初の物件を追加'}
+                  </span>
+                  <ChevronRight size={14} color="#9CA3AF" />
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Onboarding banner */}
           {showOnboarding && (
@@ -324,7 +428,7 @@ export default function DashboardClient({
                     )
                   })()}
                   <button
-                    onClick={() => router.push(`/dashboard/orders/${nextBooking.id}`)}
+                    onClick={() => router.push(`/client/orders/${nextBooking.id}`)}
                     style={{
                       padding: '8px 14px', borderRadius: '8px', border: '1px solid #E5E7EB',
                       background: 'white', fontSize: '12px', fontWeight: 600, color: '#4B5563',
@@ -362,7 +466,7 @@ export default function DashboardClient({
                 <div style={{ fontSize: '13px', fontWeight: 700, color: '#1F2937', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   📋 {t.recentOrders}
                 </div>
-                <a href="/dashboard/orders" style={{
+                <a href="/client/orders" style={{
                   fontSize: '12px', color: '#0EA5A0', fontWeight: 600, textDecoration: 'none',
                 }}>{t.viewAll}</a>
               </div>
@@ -377,7 +481,7 @@ export default function DashboardClient({
                     const s = getStatusStyle(b.status)
                     return (
                       <div key={b.id}
-                        onClick={() => router.push(`/dashboard/orders/${b.id}`)}
+                        onClick={() => router.push(`/client/orders/${b.id}`)}
                         style={{
                           display: 'flex', alignItems: 'center', gap: '12px',
                           padding: '12px 20px', borderBottom: '1px solid #FCFCFD',
@@ -513,6 +617,133 @@ export default function DashboardClient({
         </div>
       </div>
 
+      {/* ====================== ONBOARDING POPUP ====================== */}
+      {profileIncomplete && showInfoPopup && (
+        <div style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          backdropFilter: 'blur(4px)',
+        }}>
+          <div style={{
+            background: 'white', borderRadius: '16px', padding: '32px',
+            width: '100%', maxWidth: '480px', margin: '16px',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+            animation: 'fadeInUp 0.3s ease', position: 'relative',
+          }}>
+            {/* Close button */}
+            <button onClick={() => setShowInfoPopup(false)} style={{
+              position: 'absolute', top: '16px', right: '16px',
+              background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF',
+              display: 'flex', padding: '4px', borderRadius: '4px',
+            }}
+              onMouseEnter={e => e.currentTarget.style.color = '#374151'}
+              onMouseLeave={e => e.currentTarget.style.color = '#9CA3AF'}
+            >
+              <X size={18} />
+            </button>
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <div style={{
+                width: '56px', height: '56px', borderRadius: '14px',
+                background: 'linear-gradient(135deg, #0EA5A0, #14B8A6)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                margin: '0 auto 12px', fontSize: '24px',
+              }}>👋</div>
+              <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#111827', marginBottom: '4px' }}>
+                {lang === 'en' ? 'Complete Your Profile' : 'プロフィールを完成させましょう'}
+              </h2>
+              <p style={{ fontSize: '13px', color: '#6B7280' }}>
+                {lang === 'en' ? 'Please fill in your details to get started' : '開始するには詳細を入力してください'}
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '5px' }}>
+                  {lang === 'en' ? 'Full Name *' : '氏名 *'}
+                </label>
+                <input type="text" value={popupName} onChange={e => setPopupName(e.target.value)}
+                  placeholder={lang === 'en' ? 'Your full name' : 'フルネーム'}
+                  style={{
+                    width: '100%', padding: '10px 14px', borderRadius: '8px',
+                    border: '1px solid #D1D5DB', fontSize: '14px', outline: 'none',
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#0EA5A0'}
+                  onBlur={e => e.target.style.borderColor = '#D1D5DB'}
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '5px' }}>
+                  {lang === 'en' ? 'Address *' : '住所 *'}
+                </label>
+                <input type="text" value={popupAddress} onChange={e => setPopupAddress(e.target.value)}
+                  placeholder={lang === 'en' ? 'e.g. 1-2-3 Shibuya, Shibuya-ku, Tokyo' : '例: 東京都渋谷区渋谷1-2-3'}
+                  style={{
+                    width: '100%', padding: '10px 14px', borderRadius: '8px',
+                    border: '1px solid #D1D5DB', fontSize: '14px', outline: 'none',
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#0EA5A0'}
+                  onBlur={e => e.target.style.borderColor = '#D1D5DB'}
+                />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '5px' }}>
+                    {lang === 'en' ? 'Building Name' : '建物名'}
+                  </label>
+                  <input type="text" value={popupBuilding} onChange={e => setPopupBuilding(e.target.value)}
+                    placeholder={lang === 'en' ? 'Optional' : '任意'}
+                    style={{
+                      width: '100%', padding: '10px 14px', borderRadius: '8px',
+                      border: '1px solid #D1D5DB', fontSize: '14px', outline: 'none',
+                    }}
+                    onFocus={e => e.target.style.borderColor = '#0EA5A0'}
+                    onBlur={e => e.target.style.borderColor = '#D1D5DB'}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#4B5563', marginBottom: '5px' }}>
+                    {lang === 'en' ? 'Room Number' : '部屋番号'}
+                  </label>
+                  <input type="text" value={popupRoom} onChange={e => setPopupRoom(e.target.value)}
+                    placeholder={lang === 'en' ? 'Optional' : '任意'}
+                    style={{
+                      width: '100%', padding: '10px 14px', borderRadius: '8px',
+                      border: '1px solid #D1D5DB', fontSize: '14px', outline: 'none',
+                    }}
+                    onFocus={e => e.target.style.borderColor = '#0EA5A0'}
+                    onBlur={e => e.target.style.borderColor = '#D1D5DB'}
+                  />
+                </div>
+              </div>
+
+              {popupError && (
+                <div style={{ background: '#FEE2E2', border: '1px solid #FECACA', borderRadius: '6px', padding: '8px 12px', fontSize: '12px', color: '#DC2626' }}>
+                  {popupError}
+                </div>
+              )}
+            </div>
+
+            <button onClick={handlePopupSave} disabled={popupSaving}
+              style={{
+                width: '100%', marginTop: '20px', padding: '12px', borderRadius: '10px',
+                border: 'none', background: '#0EA5A0', color: 'white',
+                fontSize: '14px', fontWeight: 600, cursor: popupSaving ? 'not-allowed' : 'pointer',
+                opacity: popupSaving ? 0.7 : 1, display: 'flex', alignItems: 'center',
+                justifyContent: 'center', gap: '8px',
+              }}
+            >
+              {popupSaving ? '...' : (lang === 'en' ? 'Save & Continue' : '保存して続行')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(16px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
 
     </div>
   )

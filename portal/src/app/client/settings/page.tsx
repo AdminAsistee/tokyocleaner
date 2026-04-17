@@ -8,5 +8,12 @@ export default async function SettingsPage() {
 
   if (!user) redirect('/login')
 
-  return <SettingsClient user={user} />
+  // Fetch client record linked to this auth user
+  const { data: clientData } = await supabase
+    .from('clients')
+    .select('*')
+    .eq('auth_user_id', user.id)
+    .single()
+
+  return <SettingsClient user={user} clientRecord={clientData} />
 }

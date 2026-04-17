@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { Globe, LogOut, LayoutDashboard, CalendarDays, Building2, Settings, HelpCircle, X } from 'lucide-react'
+import { Globe, LogOut, LayoutDashboard, CalendarDays, Building2, Settings, HelpCircle, X, Shield, Users, ClipboardList } from 'lucide-react'
+
+type Role = 'admin' | 'client' | 'staff'
 
 interface SidebarProps {
   lang: 'en' | 'jp'
@@ -11,14 +13,54 @@ interface SidebarProps {
   activeNav?: string
   isOpen: boolean
   onClose: () => void
+  role?: Role
 }
 
 const i18n = {
-  en: { portal: 'PORTAL', account: 'ACCOUNT', dashboard: 'Dashboard', myOrders: 'My Orders', myProperty: 'My Property', settings: 'Settings', help: 'Help', signOut: 'Sign Out', langSwitch: '日本語に切替' },
-  jp: { portal: 'ポータル', account: 'アカウント', dashboard: 'ダッシュボード', myOrders: '注文履歴', myProperty: '物件情報', settings: '設定', help: 'ヘルプ', signOut: 'サインアウト', langSwitch: 'Switch to English' },
+  en: {
+    // Client
+    portal: 'CLIENT PORTAL',
+    account: 'ACCOUNT',
+    dashboard: 'Dashboard',
+    myOrders: 'My Orders',
+    myProperty: 'My Property',
+    settings: 'Settings',
+    help: 'Help',
+    signOut: 'Sign Out',
+    langSwitch: '日本語に切替',
+    // Admin
+    adminPortal: 'ADMIN PANEL',
+    adminDashboard: 'Admin Dashboard',
+    manageClients: 'Clients',
+    manageBookings: 'Bookings',
+    manageStaff: 'Staff',
+    // Staff
+    staffPortal: 'STAFF PORTAL',
+    staffDashboard: 'My Jobs',
+    staffSchedule: 'Schedule',
+  },
+  jp: {
+    portal: 'クライアントポータル',
+    account: 'アカウント',
+    dashboard: 'ダッシュボード',
+    myOrders: '注文履歴',
+    myProperty: '物件情報',
+    settings: '設定',
+    help: 'ヘルプ',
+    signOut: 'サインアウト',
+    langSwitch: 'Switch to English',
+    adminPortal: '管理パネル',
+    adminDashboard: '管理ダッシュボード',
+    manageClients: 'クライアント管理',
+    manageBookings: '予約管理',
+    manageStaff: 'スタッフ管理',
+    staffPortal: 'スタッフポータル',
+    staffDashboard: '担当業務',
+    staffSchedule: 'スケジュール',
+  },
 }
 
-export default function Sidebar({ lang, onLangToggle, activeNav = 'dashboard', isOpen, onClose }: SidebarProps) {
+export default function Sidebar({ lang, onLangToggle, activeNav = 'dashboard', isOpen, onClose, role = 'client' }: SidebarProps) {
   const router = useRouter()
   const [hovered, setHovered] = useState(false)
   const t = i18n[lang]
@@ -32,14 +74,36 @@ export default function Sidebar({ lang, onLangToggle, activeNav = 'dashboard', i
     router.refresh()
   }
 
-  const navItems = [
-    { id: 'dashboard', icon: <LayoutDashboard size={20} />, label: t.dashboard, href: '/dashboard' },
-    { id: 'orders',    icon: <CalendarDays size={20} />,    label: t.myOrders,   href: '/dashboard/orders' },
-    { id: 'property',  icon: <Building2 size={20} />,       label: t.myProperty, href: '/dashboard/property' },
-  ]
+  // Build nav items based on role
+  const getNavItems = () => {
+    switch (role) {
+      case 'admin':
+        return [
+          { id: 'dashboard', icon: <Shield size={20} />, label: t.adminDashboard, href: '/admin' },
+          { id: 'clients',   icon: <Users size={20} />,  label: t.manageClients,  href: '/admin/clients' },
+          { id: 'bookings',  icon: <CalendarDays size={20} />, label: t.manageBookings, href: '/admin/bookings' },
+          { id: 'staff',     icon: <ClipboardList size={20} />, label: t.manageStaff, href: '/admin/staff' },
+        ]
+      case 'staff':
+        return [
+          { id: 'dashboard', icon: <LayoutDashboard size={20} />, label: t.staffDashboard, href: '/staff' },
+          { id: 'schedule',  icon: <CalendarDays size={20} />,    label: t.staffSchedule,  href: '/staff/schedule' },
+        ]
+      default: // client
+        return [
+          { id: 'dashboard', icon: <LayoutDashboard size={20} />, label: t.dashboard, href: '/client' },
+          { id: 'orders',    icon: <CalendarDays size={20} />,    label: t.myOrders,   href: '/client/orders' },
+          { id: 'property',  icon: <Building2 size={20} />,       label: t.myProperty, href: '/client/property' },
+        ]
+    }
+  }
+
+  const navItems = getNavItems()
+  const portalLabel = role === 'admin' ? t.adminPortal : role === 'staff' ? t.staffPortal : t.portal
+  const portalSubtitle = role === 'admin' ? 'Admin Panel' : role === 'staff' ? 'Staff Portal' : 'Client Portal'
 
   const accountItems = [
-    { id: 'settings', icon: <Settings size={20} />, label: t.settings, href: '/dashboard/settings' },
+    { id: 'settings', icon: <Settings size={20} />, label: t.settings, href: role === 'admin' ? '/admin/settings' : role === 'staff' ? '/staff/settings' : '/client/settings' },
     { id: 'help',     icon: <HelpCircle size={20} />, label: t.help, href: '#' },
   ]
 
@@ -100,7 +164,7 @@ export default function Sidebar({ lang, onLangToggle, activeNav = 'dashboard', i
             {expanded && (
               <div style={{ opacity: 1, transition: 'opacity 0.2s ease 0.1s' }}>
                 <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#111827', lineHeight: 1.2 }}>TokyoCleaner</div>
-                <div style={{ fontSize: '0.68rem', color: '#9CA3AF' }}>Customer Portal</div>
+                <div style={{ fontSize: '0.68rem', color: '#9CA3AF' }}>{portalSubtitle}</div>
               </div>
             )}
           </div>
@@ -126,7 +190,7 @@ export default function Sidebar({ lang, onLangToggle, activeNav = 'dashboard', i
               letterSpacing: '1.2px', textTransform: 'uppercase',
               padding: '12px 16px 6px',
               transition: 'opacity 0.2s',
-            }}>{t.portal}</div>
+            }}>{portalLabel}</div>
           )}
 
           {navItems.map(item => (
